@@ -19,10 +19,10 @@ async def on_ready():
 # async def on_message(message):
  #   emoji ="👍"
   #  await message.add_reaction(emoji)
+# スラッシュコマンド
 @tree.command(name='hello', description='こんにちは！') 
 async def test(interaction: discord.Interaction): 
   await interaction.response.send_message('こんにちは！')
-    
 @tree.command(name='membercount', description='サーバーの人数を表示します') 
 async def on_message(message):
     # message インスタンスから guild インスタンスを取得
@@ -36,6 +36,9 @@ async def on_message(message):
     await message.response.send_message(f'今の人数は{member_count}です')
         
 # 返信する非同期関数を定義
+async def reply(hello_message):
+    send_message = f'{message.author.mention}さん、こんにちは！'# 返信メッセージの作成
+    await message.channel.send(send_message) # 返信メッセージを送信
 async def reply(message):
     reply = f'{message.author.mention} 呼びましたか？' # 返信メッセージの作成
     await message.channel.send(reply) # 返信メッセージを送信
@@ -44,8 +47,7 @@ async def on_message(message):
     if message.author.bot:
         pass
     elif message.content.startswith('こんにちは！'):
-        send_message = f'{message.author.mention}さん、こんにちは！'
-        await message.channel.send(send_message)
+        await reply(hello_message) # 返信する非同期関数を実行
     elif client.user in message.mentions: # 話しかけられたかの判定
         await reply(message) # 返信する非同期関数を実行
 
