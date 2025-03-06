@@ -1,6 +1,7 @@
 import discord
 import os
 from keep_alive import keep_alive
+from discord import app_commands
 
 client = discord.Client(intents=discord.Intents.default())
 tree = app_commands.CommandTree(client)
