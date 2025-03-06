@@ -42,6 +42,7 @@ async def on_message(call_message):
     if client.user in call_message.mentions: # 話しかけられたかの判定
         reply = f'{call_message.author.mention} 呼びましたか？' # 返信メッセージの作成
         await call_message.channel.send(reply) # 返信メッセージを送信
+        print('通過しました')
         #await reply(message) # 返信する非同期関数を実行
 #async def on_message(message):
 #    if message.author.bot:
