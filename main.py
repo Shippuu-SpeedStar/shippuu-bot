@@ -33,7 +33,21 @@ async def on_message(message):
     user_count = sum(1 for member in guild.members if not member.bot)
     # BOTのみ
     bot_count = sum(1 for member in guild.members if member.bot)
-    await message.response.send_message(f'メンバー数：{member_count}ユーザー数：{user_count}ボット数：{bot_count}')
+    await message.response.send_message(f'今の人数は{member_count}です')
+        
+# 返信する非同期関数を定義
+async def reply(message):
+    reply = f'{message.author.mention} 呼びましたか？' # 返信メッセージの作成
+    await message.channel.send(reply) # 返信メッセージを送信
+@client.event
+async def on_message(message):
+    if message.author.bot:
+        pass
+    elif message.content.startswith('こんにちは！'):
+        send_message = f'{message.author.mention}さん、こんにちは！'
+        await message.channel.send(send_message)
+    elif client.user in message.mentions: # 話しかけられたかの判定
+        await reply(message) # 返信する非同期関数を実行
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
