@@ -35,11 +35,11 @@ async def on_message(call_message):
             reply = f'{call_message.author.mention} 呼びましたか？' # 返信メッセージの作成
             await call_message.channel.send(reply) # 返信メッセージを送信
         
-@client.event
-async def on_message(hello_message):
-    if message.author != client.user:
-        if hello_message.content == "こんにちは！": # 話しかけられたかの判定
-            await hello_message.channel.send('こんにちは！') # 返信メッセージを送信
+#@client.event
+#async def on_message(hello_message):
+#    if message.author != client.user:
+#        if hello_message.content == "こんにちは！": # 話しかけられたかの判定
+#            await hello_message.channel.send('こんにちは！') # 返信メッセージを送信
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
