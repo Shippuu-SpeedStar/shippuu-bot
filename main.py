@@ -33,7 +33,7 @@ async def on_message(message):
     user_count = sum(1 for member in guild.members if not member.bot)
     # BOTのみ
     bot_count = sum(1 for member in guild.members if member.bot)
-    await interaction.response.send(f'メンバー数：{member_count}ユーザー数：{user_count}ボット数：{bot_count}')
+    await message.response.send_message(f'メンバー数：{member_count}ユーザー数：{user_count}ボット数：{bot_count}')
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
