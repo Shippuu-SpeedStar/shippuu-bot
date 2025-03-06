@@ -30,25 +30,18 @@ async def on_message(message):
     # ユーザとBOTを区別しない場合
     member_count = guild.member_count
     await message.response.send_message(f'今の人数は{member_count}です')
-        
-# 返信する非同期関数を定義
-#async def reply(message):
-#    reply = f'{message.author.mention} 呼びましたか？' # 返信メッセージの作成
-#    await message.channel.send(reply) # 返信メッセージを送信
+
 @client.event
 async def on_message(call_message):
     if call_message.author.bot:
         return
-    if client.user in call_message.mentions: # 話しかけられたかの判定
+    elif client.user in call_message.mentions: # 話しかけられたかの判定
         reply = f'{call_message.author.mention} 呼びましたか？' # 返信メッセージの作成
         await call_message.channel.send(reply) # 返信メッセージを送信
         print('通過しました')
-        #await reply(message) # 返信する非同期関数を実行
-#async def on_message(message):
-#    if message.author.bot:
-#        return
-#    if "こんにちは！" in message.content.lower():
-#        send_message = f'{hello_message.author.mention}さん、こんにちは！'# 返信メッセージの作成
+    elif "こんにちは！" in message.content.lower():
+        reply = f'{call_message.author.mention}さん、こんにちは！'# 返信メッセージの作成
+        await call_message.channel.send(reply) # 返信メッセージを送信
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
