@@ -10,8 +10,8 @@ tree = app_commands.CommandTree(client)
 async def on_ready():
     print('ログインしました')
  # アクティビティを設定
-    new_activity = f"テスト"
-    await client.change_presence(activity=discord.Game(new_activity))
+    activity = discord.Activity(name='疾風スピードスター', type=discord.ActivityType.competing)
+    await client.change_presence(status=discord.Status.online, activity=activity)
 
     # スラッシュコマンドを同期
     await tree.sync()
@@ -19,9 +19,17 @@ async def on_ready():
 # async def on_message(message):
  #   emoji ="👍"
   #  await message.add_reaction(emoji)
-@tree.command(name='hello', description='Say hello to the world!') 
+@tree.command(name='hello', description='こんにちは！') 
 async def test(interaction: discord.Interaction): 
   await interaction.response.send_message('こんにちは！')
+    
+@tree.command(name='membercount', description='サーバーの人数を表示します') 
+async def on_message(message):
+    # message インスタンスから guild インスタンスを取得
+    guild = message.guild 
+    # ユーザとBOTを区別しない場合
+    member_count = guild.member_count
+    await message.channel.send(f'メンバー数：{member_count}')
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
