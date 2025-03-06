@@ -20,9 +20,6 @@ async def on_ready():
  #   emoji ="👍"
   #  await message.add_reaction(emoji)
 # スラッシュコマンド
-@tree.command(name='hello', description='こんにちは！') 
-async def test(interaction: discord.Interaction): 
-  await interaction.response.send_message('こんにちは！')
 @tree.command(name='membercount', description='サーバーの人数を表示します') 
 async def on_message(message):
     # message インスタンスから guild インスタンスを取得
