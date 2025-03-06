@@ -40,7 +40,7 @@ async def on_message(call_message):
         await call_message.channel.send(reply) # 返信メッセージを送信
 @client.event
 async def on_message(hello_message):
-    if hello_message.author.bot and hello_message.content == "こんにちは！": # 話しかけられたかの判定
+    if not hello_message.author.bot and hello_message.content == "こんにちは！": # 話しかけられたかの判定
         reply = 'こんにちは！'# 返信メッセージの作成
         await hello_message.channel.send(reply) # 返信メッセージを送信
 
