@@ -39,9 +39,9 @@ async def on_message(call_message):
         reply = f'{call_message.author.mention} 呼びましたか？' # 返信メッセージの作成
         await call_message.channel.send(reply) # 返信メッセージを送信
         print('通過しました')
-    elif "こんにちは！" in message.content.lower():
-        reply = f'{call_message.author.mention}さん、こんにちは！'# 返信メッセージの作成
-        await call_message.channel.send(reply) # 返信メッセージを送信
+#    elif "こんにちは！" in message.content.lower():
+#        reply = f'{call_message.author.mention}さん、こんにちは！'# 返信メッセージの作成
+#        await call_message.channel.send(reply) # 返信メッセージを送信
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
