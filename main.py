@@ -45,11 +45,11 @@ async def on_message(message):
         return
     if client.user in message.mentions: # 話しかけられたかの判定
         await reply(message) # 返信する非同期関数を実行
-async def on_message(message):
-    if message.author.bot:
-        return
-    if "こんにちは！" in message.content.lower():
-        send_message = f'{hello_message.author.mention}さん、こんにちは！'# 返信メッセージの作成
+#async def on_message(message):
+#    if message.author.bot:
+#        return
+#    if "こんにちは！" in message.content.lower():
+#        send_message = f'{hello_message.author.mention}さん、こんにちは！'# 返信メッセージの作成
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
