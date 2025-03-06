@@ -3,6 +3,7 @@ import os
 from keep_alive import keep_alive
 
 client = discord.Client(intents=discord.Intents.default())
+tree = app_commands.CommandTree(client)
 
 @client.event
 async def on_ready():
