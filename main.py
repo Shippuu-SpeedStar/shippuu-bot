@@ -34,10 +34,10 @@ async def on_message(message):
     if message.author.bot:
         return
     if message.content == '疾風、来てください':
-        global voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
+        voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
         return
     elif message.content == '疾風、VC退出です！':
-        global voiceChannel.stop()
+        voiceChannel.stop()
         await voiceChannel.disconnect()
         return
     elif message.content == "こんにちは":
