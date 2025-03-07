@@ -2,14 +2,11 @@ import discord
 import os
 from keep_alive import keep_alive
 from discord import app_commands
-import asyncio
-from discord.channel import VoiceChannel
 
 intents=discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-global voiceChannel: VoiceChannel
 
 @client.event
 async def on_ready():
@@ -31,13 +28,6 @@ async def member_count(message):
 @client.event
 async def on_message(message):
     if message.author.bot:
-        return
-    if message.content == '疾風、来てください':
-        voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
-        return
-    elif message.content == '疾風、VC退出です！':
-        voiceChannel.stop()
-        await voiceChannel.disconnect()
         return
     elif message.content == "こんにちは":
         await message.channel.send("こんにちは！")
