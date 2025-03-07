@@ -51,7 +51,7 @@ async def on_message(message):
     elif message.content == "!vc":
         if message.author.voice:
             channel = message.author.voice.channel
-            await message.channel.connect()
+            await channel.connect()
             await message.channel.send(f"VCに参加しました: {channel.name}")
         else:
             await message.channel.send('ボイスチャンネルに接続してからコマンドを実行してください。')
