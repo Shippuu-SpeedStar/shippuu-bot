@@ -38,7 +38,7 @@ async def on_message(message):
 #            await call_message.channel.send(reply) # 返信メッセージを送信
         
 @client.event
-async def react_message(message):
+async def on_message(message):
     if message.author.bot:
         return
     if message.content == "こんにちは":
