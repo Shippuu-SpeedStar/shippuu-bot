@@ -3,20 +3,11 @@ import os
 from keep_alive import keep_alive
 # スラッシュコマンド
 from discord import app_commands
-# 天気予報
-import urllib.request
-import json
-import re
 
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-# 天気予報
-citycode = '130000'
-#resp = urllib.request.urlopen('https://www.jma.go.jp/bosai/forecast/data/forecast/%s'%citycode.json).read()
-resp = urllib.request.urlopen('https://www.jma.go.jp/bosai/forecast/data/forecast/130000.json').read()
-resp = json.loads(resp.decode('utf-8'))
 
 @client.event
 async def on_ready():
@@ -35,13 +26,6 @@ async def on_message(message):
     # ユーザとBOTを区別しない場合
     member_count = guild.member_count
     await message.response.send_message(f'今の人数は{member_count}です')
-
-#@client.event
-#async def on_message(call_message):
-#    if call_message.author != client.user:
-#        if client.user in call_message.mentions: # 話しかけられたかの判定
-#            reply = f'{call_message.author.mention} 呼びましたか？' # 返信メッセージの作成
-#            await call_message.channel.send(reply) # 返信メッセージを送信
         
 @client.event
 async def react_message(message):
@@ -54,13 +38,6 @@ async def react_message(message):
     elif message.content == "いいね":
         emoji ="👍"
         await message.add_reaction(emoji)
-    elif message.content == "Bot君、札幌の天気は？":
-        msg = resp['location']['city']
-        msg += "の天気は、\n"
-        for f in resp['forecasts']:
-            msg += f['dateLabel'] + "が" + f['telop'] + "\n"
-            msg += "です。"
-            await client.send_message(message.channel, message.author.mention + msg)
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 # Web サーバの立ち上げ
