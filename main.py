@@ -45,6 +45,9 @@ async def react_message(message):
         await message.channel.send("こんにちは！")
     elif client.user in message.mentions: # 話しかけられたかの判定
         await message.channel.send(f'{message.author.mention} 呼びましたか？') # 返信メッセージを送信
+    elif message.content == "いいね":
+        emoji ="👍"
+        await message.add_reaction(emoji)
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
