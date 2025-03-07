@@ -44,7 +44,6 @@ async def on_message(message):
         if message.author.voice:
             voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
             #await message.author.voice.channel.connect()
-            voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
             await message.channel.send(f"VCに参加しました: {channel.name}")
         else:
             await message.channel.send('VCに接続してから言ってください')
