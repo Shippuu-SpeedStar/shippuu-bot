@@ -14,9 +14,13 @@ async def on_ready():
  # アクティビティを設定
     activity = discord.Activity(name='疾風スピードスター', type=discord.ActivityType.competing)
     await client.change_presence(status=discord.Status.online, activity=activity)
+
     # スラッシュコマンドを同期
     await tree.sync()
-    
+# @client.event
+# async def on_message(message):
+ #   emoji ="👍"
+  #  await message.add_reaction(emoji)
 # スラッシュコマンド
 @tree.command(name='membercount', description='サーバーの人数を表示します') 
 async def on_message(message):
@@ -34,16 +38,14 @@ async def on_message(message):
 #            await call_message.channel.send(reply) # 返信メッセージを送信
         
 @client.event
-async def react_message(reacttion_message):
-    if reacttion_message.author.bot:
+async def on_message(message):
+    if message.author.bot:
         return
-    elif reacttion_message.content == "こんにちは":
-        await reacttion_message.channel.send("こんにちは！")
-    elif client.user in reacttion_message.mentions: # 話しかけられたかの判定
-        await reacttion_message.channel.send(f'{reacttion_message.author.mention} 呼びましたか？') # 返信メッセージを送信
-#    elif message.content == "いいね":
-#        emoji ="👍"
-#        await message.add_reaction(emoji)
+    if message.content == "こんにちは":
+        await message.channel.send("こんにちは！")
+    elif client.user in message.mentions: # 話しかけられたかの判定
+        await message.channel.send(f'{message.author.mention} 呼びましたか？') # 返信メッセージを送信
+
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 # Web サーバの立ち上げ
