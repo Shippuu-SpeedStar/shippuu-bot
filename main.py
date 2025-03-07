@@ -56,11 +56,11 @@ async def on_message(message):
         else:
             await message.send("ボイスチャンネルに接続してからコマンドを実行してください。")
     elif message.content == "!leave":
-        if ctx.voice_client:
-            await ctx.voice_client.disconnect()
-            await ctx.send("VCから退出しました。")
+        if message.voice_client:
+            await message.voice_client.disconnect()
+            await message.send("VCから退出しました。")
         else:
-            await ctx.send("ボットはVCに参加していません。")
+            await message.send("ボットはVCに参加していません。")
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
