@@ -15,13 +15,8 @@ async def on_ready():
  # アクティビティを設定
     activity = discord.Activity(name='疾風スピードスター', type=discord.ActivityType.competing)
     await client.change_presence(status=discord.Status.online, activity=activity)
-
     # スラッシュコマンドを同期
     await tree.sync()
-# @client.event
-# async def on_message(message):
- #   emoji ="👍"
-  #  await message.add_reaction(emoji)
 # スラッシュコマンド
 @tree.command(name='membercount', description='サーバーの人数を表示します') 
 async def member_count(message):
@@ -30,13 +25,6 @@ async def member_count(message):
     # ユーザとBOTを区別しない場合
     member_count = guild.member_count
     await message.response.send_message(f'今の人数は{member_count}です')
-
-#@client.event
-#async def on_message(call_message):
-#    if call_message.author != client.user:
-#        if client.user in call_message.mentions: # 話しかけられたかの判定
-#            reply = f'{call_message.author.mention} 呼びましたか？' # 返信メッセージの作成
-#            await call_message.channel.send(reply) # 返信メッセージを送信
         
 @client.event
 async def on_message(message):
@@ -58,8 +46,8 @@ async def on_message(message):
             await message.channel.send('VCに接続してから言ってください')
     elif message.content == "疾風、VC退出です！":
         if message.voice_client:
-            await message.voice_client.disconnect()
-            await message.send("VCから退出しました。")
+            await message.author.voice.channel.disconnect()
+            await message.send("ありがとうございました！")
         else:
             await ctx.send("ボットはVCに参加していません。")
 
