@@ -3,8 +3,9 @@ import os
 from keep_alive import keep_alive
 from discord import app_commands
 
-client = discord.Client(intents=discord.Intents.default())
+intents = discord.Intents.default()
 intents.message_content = True
+client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 @client.event
