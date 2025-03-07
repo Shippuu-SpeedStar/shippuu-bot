@@ -3,7 +3,6 @@ import os
 from keep_alive import keep_alive
 from discord import app_commands
 import asyncio
-import PyNaCl
 
 intents = discord.Intents.default()
 intents.message_content = True
