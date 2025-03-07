@@ -14,7 +14,8 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 # 天気予報
 citycode = '016010'
-resp = urllib.request.urlopen('https://www.jma.go.jp/bosai/forecast/data/forecast/%s'%citycode.json).read()
+#resp = urllib.request.urlopen('https://www.jma.go.jp/bosai/forecast/data/forecast/%s'%citycode.json).read()
+resp = urllib.request.urlopen('https://www.jma.go.jp/bosai/forecast/data/forecast/016010.json').read()
 resp = json.loads(resp.decode('utf-8'))
 
 @client.event
