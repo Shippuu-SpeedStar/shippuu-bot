@@ -28,12 +28,12 @@ async def on_message(message):
     member_count = guild.member_count
     await message.response.send_message(f'今の人数は{member_count}です')
 
-@client.event
-async def on_message(call_message):
-    if call_message.author != client.user:
-        if client.user in call_message.mentions: # 話しかけられたかの判定
-            reply = f'{call_message.author.mention} 呼びましたか？' # 返信メッセージの作成
-            await call_message.channel.send(reply) # 返信メッセージを送信
+#@client.event
+#async def on_message(call_message):
+#    if call_message.author != client.user:
+#        if client.user in call_message.mentions: # 話しかけられたかの判定
+#            reply = f'{call_message.author.mention} 呼びましたか？' # 返信メッセージの作成
+#            await call_message.channel.send(reply) # 返信メッセージを送信
         
 @client.event
 async def Hi_message(hello_message):
