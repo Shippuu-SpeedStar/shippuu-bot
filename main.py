@@ -43,9 +43,9 @@ async def on_message(message):
         return
     if message.content == "こんにちは":
         await message.channel.send("こんにちは！")
-    if client.user in call_message.mentions: # 話しかけられたかの判定
-            reply = f'{call_message.author.mention} 呼びましたか？' # 返信メッセージの作成
-            await call_message.channel.send(reply) # 返信メッセージを送信
+    if client.user in message.mentions: # 話しかけられたかの判定
+            reply = f'{message.author.mention} 呼びましたか？' # 返信メッセージの作成
+            await message.channel.send(reply) # 返信メッセージを送信
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
