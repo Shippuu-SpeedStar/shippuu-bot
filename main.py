@@ -40,6 +40,7 @@ async def on_message(message):
         await message.add_reaction(emoji)
     elif message.content == "疾風、来てください":
         if message.author.voice:
+            global voiceChannel
             channel = message.author.voice.channel
             #await message.author.voice.channel.connect()
             voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
