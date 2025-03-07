@@ -4,6 +4,7 @@ from keep_alive import keep_alive
 from discord import app_commands
 
 client = discord.Client(intents=discord.Intents.default())
+intents.message_content = True
 tree = app_commands.CommandTree(client)
 
 @client.event
@@ -36,10 +37,11 @@ async def on_message(message):
 #            await call_message.channel.send(reply) # 返信メッセージを送信
         
 @client.event
-async def Hi_message(hello_message):
-    if hello_message.author != client.user:
-        if hello_message.content == "こんにちは！": # 話しかけられたかの判定
-            await hello_message.channel.send('こんにちは！') # 返信メッセージを送信
+async def on_message(message):
+    if message.author.bot:
+        return
+    if message.content == "こんにちは":
+        await message.channel.send("こんにちは！")
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
