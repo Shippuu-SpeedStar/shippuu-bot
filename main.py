@@ -5,7 +5,7 @@ from discord import app_commands
 import asyncio
 from discord.channel import VoiceChannel
 
-intents = discord.Intents.all()
+intents=discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
