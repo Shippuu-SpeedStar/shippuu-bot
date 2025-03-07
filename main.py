@@ -34,13 +34,13 @@ async def on_message(message):
 #            await call_message.channel.send(reply) # 返信メッセージを送信
         
 @client.event
-async def react_message(message):
-    if message.author.bot:
+async def react_message(reacttion_message):
+    if reacttion_message.author.bot:
         return
-    elif message.content == "こんにちは":
-        await message.channel.send("こんにちは！")
-    elif client.user in message.mentions: # 話しかけられたかの判定
-        await message.channel.send(f'{message.author.mention} 呼びましたか？') # 返信メッセージを送信
+    elif reacttion_message.content == "こんにちは":
+        await reacttion_message.channel.send("こんにちは！")
+    elif client.user in reacttion_message.mentions: # 話しかけられたかの判定
+        await reacttion_message.channel.send(f'{reacttion_message.author.mention} 呼びましたか？') # 返信メッセージを送信
 #    elif message.content == "いいね":
 #        emoji ="👍"
 #        await message.add_reaction(emoji)
