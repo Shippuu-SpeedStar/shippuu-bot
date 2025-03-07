@@ -38,10 +38,10 @@ async def on_message(message):
 #            await call_message.channel.send(reply) # 返信メッセージを送信
         
 @client.event
-async def on_message(message):
+async def react_message(message):
     if message.author.bot:
         return
-    if message.content == "こんにちは":
+    elif message.content == "こんにちは":
         await message.channel.send("こんにちは！")
     elif client.user in message.mentions: # 話しかけられたかの判定
         await message.channel.send(f'{message.author.mention} 呼びましたか？') # 返信メッセージを送信
