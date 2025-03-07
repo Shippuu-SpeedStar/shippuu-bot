@@ -45,7 +45,7 @@ async def on_message(message):
         else:
             await message.channel.send('VCに接続してから言ってください')
     elif message.content == "疾風、VC退出です！":
-        if message.voice_client:
+        if message.voice.client:
             await message.author.voice.channel.disconnect()
             await message.channel.send("ありがとうございました！")
         else:
