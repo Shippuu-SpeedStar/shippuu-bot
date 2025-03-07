@@ -23,7 +23,7 @@ async def on_ready():
   #  await message.add_reaction(emoji)
 # スラッシュコマンド
 @tree.command(name='membercount', description='サーバーの人数を表示します') 
-async def on_message(message):
+async def member_count(message):
     # message インスタンスから guild インスタンスを取得
     guild = message.guild 
     # ユーザとBOTを区別しない場合
