@@ -33,25 +33,22 @@ async def on_message(message):
     global voiceChannel
     if message.author.bot:
         return
-    if message.content == "こんにちは":
+    if message.content == '疾風、来てください':
+        voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
+        await message.channel.send('読み上げBotが参加しました')
+        return
+    elif message.content == '疾風、VC退出です！':
+        voiceChannel.stop()
+        await message.channel.send('読み上げBotが退出しました')
+        await voiceChannel.disconnect()
+        return
+    elif message.content == "こんにちは":
         await message.channel.send("こんにちは！")
     elif client.user in message.mentions: # 話しかけられたかの判定
         await message.channel.send(f'{message.author.mention} 呼びましたか？') # 返信メッセージを送信
     elif message.content == "いいね":
         emoji ="👍"
         await message.add_reaction(emoji)
-    elif message.content == "疾風、来てください":
-        if message.author.voice:
-            voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
-            #await message.author.voice.channel.connect()
-            await message.channel.send(f"VCに参加しました: {channel.name}")
-        else:
-            await message.channel.send('VCに接続してから言ってください')
-    elif message.content == "疾風、VC退出です！":
-        VoiceChannel.stop()
-        await VoiceChannel.disconnect()
-        #await message.author.voice.channel.leave()
-        await message.channel.send("ありがとうございました！")
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 # Web サーバの立ち上げ
