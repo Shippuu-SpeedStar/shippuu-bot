@@ -8,6 +8,7 @@ intents = discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
+voiceChannel: VoiceChannel
 
 @client.event
 async def on_ready():
@@ -40,12 +41,15 @@ async def on_message(message):
     elif message.content == "疾風、来てください":
         if message.author.voice:
             channel = message.author.voice.channel
-            await message.author.voice.channel.connect()
+            #await message.author.voice.channel.connect()
+            voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
             await message.channel.send(f"VCに参加しました: {channel.name}")
         else:
             await message.channel.send('VCに接続してから言ってください')
     elif message.content == "疾風、VC退出です！":
-        await message.author.voice.channel.leave()
+        global voiceChannel
+        await message.voice_client.disconnect()
+        #await message.author.voice.channel.leave()
         await message.channel.send("ありがとうございました！")
 
 TOKEN = os.getenv("DISCORD_TOKEN")
