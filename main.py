@@ -50,7 +50,7 @@ async def on_message(message):
         await message.add_reaction(emoji)
     elif message.content == "!vc":
         if message.author.voice:
-            channel = ctx.message.author.voice.channel
+            channel = message.author.voice.channel
             await client.channel.connect()
             await message.send(f"VCに参加しました: {channel.name}")
         else:
