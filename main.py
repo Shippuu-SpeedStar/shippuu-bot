@@ -45,11 +45,8 @@ async def on_message(message):
         else:
             await message.channel.send('VCに接続してから言ってください')
     elif message.content == "疾風、VC退出です！":
-        if client.channel.voice:
-            await message.author.voice.channel.disconnect()
-            await message.channel.send("ありがとうございました！")
-        else:
-            await message.channel.send("ボットはVCに参加していません。")
+        await message.author.voice.channel.disconnect()
+        await message.channel.send("ありがとうございました！")
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 # Web サーバの立ち上げ
