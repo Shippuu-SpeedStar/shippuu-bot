@@ -2,54 +2,11 @@ import discord
 import os
 from keep_alive import keep_alive
 from discord import app_commands
-#天気
-import openmeteo_requests
-import requests_cache
-import pandas as pd
-from retry_requests import retry
 
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-
-
-#天気予報
-# Setup the Open-Meteo API client with cache and retry on error
-cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
-retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
-openmeteo = openmeteo_requests.Client(session = retry_session)
-
-# Make sure all required weather variables are listed here
-# The order of variables in hourly or daily is important to assign them correctly below
-url = "https://api.open-meteo.com/v1/forecast"
-params = {
-	"latitude": 35.6895,
-	"longitude": 139.6917,
-	"hourly": "precipitation",
-	"daily": ["temperature_2m_max", "temperature_2m_min"],
-	"timezone": "Asia/Tokyo",
-	"forecast_days": 3
-}
-responses = openmeteo.weather_api(url, params=params)
-
-# Process first location. Add a for-loop for multiple locations or weather models
-response = responses[0]
-print(f"Coordinates {response.Latitude()}°N {response.Longitude()}°E")
-print(f"Elevation {response.Elevation()} m asl")
-print(f"Timezone {response.Timezone()} {response.TimezoneAbbreviation()}")
-print(f"Timezone difference to GMT+0 {response.UtcOffsetSeconds()} s")
-
-
-
-
-
-
-
-
-
-
-
 
 @client.event
 async def on_ready():
@@ -91,20 +48,6 @@ async def on_message(message):
     elif message.content == "いいね":
         emoji ="👍"
         await message.add_reaction(emoji)
-    elif message.content == "天気":
-        # Process hourly data. The order of variables needs to be the same as requested.
-        hourly = response.Hourly()
-        hourly_precipitation = hourly.Variables(0).ValuesAsNumpy()
-        
-        hourly_data = {"date": pd.date_range(
-            start = pd.to_datetime(hourly.Time(), unit = "s", utc = True),
-            end = pd.to_datetime(hourly.TimeEnd(), unit = "s", utc = True),
-            freq = pd.Timedelta(seconds = hourly.Interval()),
-            inclusive = "left"
-        )}
-        hourly_data["precipitation"] = hourly_precipitation
-        hourly_dataframe = pd.DataFrame(data = hourly_data)
-        await message.send(hourly_dataframe)
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
