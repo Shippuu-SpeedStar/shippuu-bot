@@ -30,6 +30,7 @@ async def member_count(message):
         
 @client.event
 async def on_message(message):
+    global voiceChannel
     if message.author.bot:
         return
     if message.content == "こんにちは":
@@ -41,15 +42,13 @@ async def on_message(message):
         await message.add_reaction(emoji)
     elif message.content == "疾風、来てください":
         if message.author.voice:
-            global voiceChannel
-            channel = message.author.voice.channel
+            voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
             #await message.author.voice.channel.connect()
             voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
             await message.channel.send(f"VCに参加しました: {channel.name}")
         else:
             await message.channel.send('VCに接続してから言ってください')
     elif message.content == "疾風、VC退出です！":
-        global voiceChannel
         voiceChannel.stop()
         await voiceChannel.disconnect()
         #await message.author.voice.channel.leave()
