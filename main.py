@@ -1,7 +1,6 @@
 import discord
 import os
 from keep_alive import keep_alive
-# スラッシュコマンド
 from discord import app_commands
 
 intents = discord.Intents.default()
@@ -26,6 +25,13 @@ async def on_message(message):
     # ユーザとBOTを区別しない場合
     member_count = guild.member_count
     await message.response.send_message(f'今の人数は{member_count}です')
+
+#@client.event
+#async def on_message(call_message):
+#    if call_message.author != client.user:
+#        if client.user in call_message.mentions: # 話しかけられたかの判定
+#            reply = f'{call_message.author.mention} 呼びましたか？' # 返信メッセージの作成
+#            await call_message.channel.send(reply) # 返信メッセージを送信
         
 @client.event
 async def react_message(message):
