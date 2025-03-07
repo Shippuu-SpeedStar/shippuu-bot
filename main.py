@@ -9,8 +9,7 @@ intents=discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-voiceChannel: VoiceChannel
-global voiceChannel
+global voiceChannel: VoiceChannel
 
 @client.event
 async def on_ready():
