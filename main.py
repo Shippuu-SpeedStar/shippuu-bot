@@ -48,6 +48,19 @@ async def on_message(message):
     elif message.content == "いいね":
         emoji ="👍"
         await message.add_reaction(emoji)
+    elif message.content == "!vc":
+        if message.author.voice:
+            channel = message.author.voice.channel
+            await message.connect()
+            await message.send(f"VCに参加しました: {channel.name}")
+        else:
+            await message.send("ボイスチャンネルに接続してからコマンドを実行してください。")
+    elif message.content == "!leave":
+        if ctx.voice_client:
+            await ctx.voice_client.disconnect()
+            await ctx.send("VCから退出しました。")
+        else:
+            await ctx.send("ボットはVCに参加していません。")
 
 
 TOKEN = os.getenv("DISCORD_TOKEN")
