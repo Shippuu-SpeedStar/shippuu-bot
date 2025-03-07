@@ -10,6 +10,7 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 voiceChannel: VoiceChannel
+global voiceChannel
 
 @client.event
 async def on_ready():
@@ -30,16 +31,13 @@ async def member_count(message):
         
 @client.event
 async def on_message(message):
-    global voiceChannel
     if message.author.bot:
         return
     if message.content == '疾風、来てください':
-        voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
-        await message.channel.send('読み上げBotが参加しました')
+        global voiceChannel = await VoiceChannel.connect(message.author.voice.channel)
         return
     elif message.content == '疾風、VC退出です！':
-        voiceChannel.stop()
-        await message.channel.send('読み上げBotが退出しました')
+        global voiceChannel.stop()
         await voiceChannel.disconnect()
         return
     elif message.content == "こんにちは":
