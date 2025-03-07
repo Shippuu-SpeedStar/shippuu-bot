@@ -4,7 +4,7 @@ from keep_alive import keep_alive
 from discord import app_commands
 import asyncio
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
