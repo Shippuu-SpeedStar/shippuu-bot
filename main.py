@@ -89,7 +89,7 @@ async def on_message(message):
             wind_dir_text = directions[int((wind_direction + 11.25) / 22.5) % 16]
             # Discordに天気情報を送信
             weather_message = (
-                f"📍 **東京の天気情報**\n"
+                f"📍 **{reg_res.group(1)}の天気情報**\n"
                 f"🌡 気温: {temperature:.1f}°C\n"
                 f"☔ 降水量: {precipitation:.1f} mm\n"
                 f"☁ 雲量: {cloud_cover:.1f}%\n"
@@ -97,7 +97,9 @@ async def on_message(message):
                 f"🧭 風向: {wind_dir_text} ({wind_direction:.1f}°)\n"
                 f"🌞 最高気温: {temp_max:.1f}°C\n"
                 f"❄ 最低気温: {temp_min:.1f}°C\n"
-                f"🌧 降水確率: {precip_prob:.1f}%"
+                f"🌧 降水確率: {precip_prob:.1f}%\n"
+                f"緯度: {citycode_latitude}°\n"
+                f"経度: {citycode_longitude}°"
             )
             await message.channel.send(weather_message)
         else:
