@@ -39,7 +39,7 @@ async def help_command(message):
 
     help_message.set_footer(text="made by TAM Game Creator", # フッターには開発者の情報でも入れてみる
                      icon_url="https://tamgamecreator.github.io/update/data/Icon01.png")
-    await message.response.sen(embed=help_message) # embedの送信には、embed={定義したembed名}
+    await message.response.send(embed=help_message) # embedの送信には、embed={定義したembed名}
         
 @client.event
 async def on_message(message):
