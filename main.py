@@ -2,11 +2,6 @@ import discord
 import os
 from keep_alive import keep_alive
 from discord import app_commands
-import openmeteo_requests
-import requests_cache
-import pandas as pd
-from retry_requests import retry
-import re
 import weather
 
 intents=discord.Intents.all()
@@ -31,6 +26,29 @@ async def member_count(message):
     # ユーザとBOTを区別しない場合
     member_count = guild.member_count
     await message.response.send_message(f'今の人数は{member_count}です')
+@tree.command(name='help', description='疾風の使い方') 
+async def member_count(message):
+    help_message = discord.Embed( # Embedを定義する
+                          title="Example Embed",# タイトル
+                          color=0x00ff00, # フレーム色指定(今回は緑)
+                          description="Example Embed for Advent Calendar", # Embedの説明文 必要に応じて
+                          url="https://tamgamecreator.github.io/NO.04" # これを設定すると、タイトルが指定URLへのリンクになる
+                          )
+    embed.set_author(name=client.user, # Botのユーザー名
+                     url="https://tamgamecreator.github.io/NO.04", # titleのurlのようにnameをリンクにできる。botのWebサイトとかGithubとか
+                     icon_url=client.user.avatar_url # Botのアイコンを設定してみる
+                     )
+
+    embed.set_thumbnail(url="https://tamgamecreator.github.io/NO.04/data/image01.png") # サムネイルとして小さい画像を設定できる
+
+    embed.set_image(url="https://tamgamecreator.github.io/NO.04/data/image03.png") # 大きな画像タイルを設定できる
+
+    embed.add_field(name="フィールド１",value="値１") # フィールドを追加。
+    embed.add_field(name="フィールド２",value="値２")
+
+    embed.set_footer(text="made by nashiroaoi", # フッターには開発者の情報でも入れてみる
+                     icon_url="https://tamgamecreator.github.io/update/data/Icon01.png")
+    await message.channel.send(embed=help_message) # embedの送信には、embed={定義したembed名}
         
 @client.event
 async def on_message(message):
