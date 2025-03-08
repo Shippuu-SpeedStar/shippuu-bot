@@ -28,7 +28,7 @@ async def member_count(message):
     member_count = guild.member_count
     await message.response.send_message(f'今の人数は{member_count}です')
 @tree.command(name='help', description='疾風の使い方') 
-async def member_count(message):
+async def help_command(message):
     help_message = discord.Embed( # Embedを定義する
                           title="疾風の使い方",# タイトル
                           color=0x00ff00, # フレーム色指定(今回は緑)
