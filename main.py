@@ -35,15 +35,8 @@ async def member_count(message):
                           description="Example Embed for Advent Calendar", # Embedの説明文 必要に応じて
                           url="https://tamgamecreator.github.io/NO.04" # これを設定すると、タイトルが指定URLへのリンクになる
                           )
-    help_message.set_author(name=client.user, # Botのユーザー名
-                     url="https://tamgamecreator.github.io/NO.04", # titleのurlのようにnameをリンクにできる。botのWebサイトとかGithubとか
-                     icon_url=client.user.avatar_url # Botのアイコンを設定してみる
-                     )
-
     help_message.set_thumbnail(url="https://tamgamecreator.github.io/NO.04/data/image01.png") # サムネイルとして小さい画像を設定できる
-
     help_message.set_image(url="https://tamgamecreator.github.io/NO.04/data/image03.png") # 大きな画像タイルを設定できる
-
     help_message.add_field(name="フィールド１",value="値１") # フィールドを追加。
     help_message.add_field(name="フィールド２",value="値２")
 
