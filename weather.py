@@ -84,4 +84,4 @@ def on_message(reg_res):
       )
       return weather_message
     else:
-      return 'そこの天気はわかりません'
+      return 'そこの天気はわからないです．．．'
