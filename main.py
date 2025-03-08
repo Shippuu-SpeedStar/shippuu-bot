@@ -55,6 +55,8 @@ async def on_message(message):
             "wind_speed_unit": "ms",
             "timezone": "Asia/Tokyo"
         }
+        responses = openmeteo.weather_api(url, params=params)
+        response = responses[0]
         # 最新の天気データを取得
         hourly = response.Hourly()
         temperature = hourly.Variables(0).ValuesAsNumpy()[0]
