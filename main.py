@@ -26,7 +26,7 @@ async def member_count(message):
     guild = message.guild 
     # ユーザとBOTを区別しない場合
     member_count = guild.member_count
-    await message.response.send(f'今の人数は{member_count}です')
+    await message.response.send_message(f'今の人数は{member_count}です')
 @tree.command(name='help', description='疾風の使い方') 
 async def help_command(message):
     help_message = discord.Embed( # Embedを定義する
@@ -39,7 +39,7 @@ async def help_command(message):
 
     help_message.set_footer(text="made by TAM Game Creator", # フッターには開発者の情報でも入れてみる
                      icon_url="https://tamgamecreator.github.io/update/data/Icon01.png")
-    await message.response.send(embed=help_message) # embedの送信には、embed={定義したembed名}
+    await message.response.send_message(embed=help_message) # embedの送信には、embed={定義したembed名}
         
 @client.event
 async def on_message(message):
