@@ -30,17 +30,14 @@ async def member_count(message):
 @tree.command(name='help', description='疾風の使い方') 
 async def member_count(message):
     help_message = discord.Embed( # Embedを定義する
-                          title="Example Embed",# タイトル
+                          title="疾風の使い方",# タイトル
                           color=0x00ff00, # フレーム色指定(今回は緑)
-                          description="Example Embed for Advent Calendar", # Embedの説明文 必要に応じて
-                          url="https://tamgamecreator.github.io/NO.04" # これを設定すると、タイトルが指定URLへのリンクになる
+                          description="このbotの使い方を説明します。"
                           )
-    help_message.set_thumbnail(url="https://tamgamecreator.github.io/NO.04/data/image01.png") # サムネイルとして小さい画像を設定できる
-    help_message.set_image(url="https://tamgamecreator.github.io/NO.04/data/image03.png") # 大きな画像タイルを設定できる
     help_message.add_field(name="フィールド１",value="値１") # フィールドを追加。
     help_message.add_field(name="フィールド２",value="値２")
 
-    help_message.set_footer(text="made by nashiroaoi", # フッターには開発者の情報でも入れてみる
+    help_message.set_footer(text="made by TAM Game Creator", # フッターには開発者の情報でも入れてみる
                      icon_url="https://tamgamecreator.github.io/update/data/Icon01.png")
     await message.channel.send(embed=help_message) # embedの送信には、embed={定義したembed名}
         
