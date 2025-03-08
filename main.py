@@ -34,8 +34,8 @@ async def member_count(message):
                           color=0x00ff00, # フレーム色指定(今回は緑)
                           description="このbotの使い方を説明します。"
                           )
-    help_message.add_field(name="/help",value="今表示しているものです。",false) # フィールドを追加。
-    help_message.add_field(name="/membercount",value="サーバー参加人数を表示します。",false)
+    help_message.add_field(name="/help",value="今表示しているものです。",, inline=False) # フィールドを追加。
+    help_message.add_field(name="/membercount",value="サーバー参加人数を表示します。",, inline=False)
 
     help_message.set_footer(text="made by TAM Game Creator", # フッターには開発者の情報でも入れてみる
                      icon_url="https://tamgamecreator.github.io/update/data/Icon01.png")
