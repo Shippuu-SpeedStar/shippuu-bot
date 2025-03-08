@@ -7,45 +7,13 @@ import requests_cache
 import pandas as pd
 from retry_requests import retry
 import re
+import weather
 
 intents=discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-# Open-Meteo APIの設定
-cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
-retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
-openmeteo = openmeteo_requests.Client(session=retry_session)
-#緯度
-citycodes_latitude = {
-    "札幌": '43.0667',
-    "仙台": '38.2667',
-    "新潟": '37.8864',
-    "東京": '35.6895',
-    "金沢": '36.6',
-    "名古屋": '35.1815',
-    "名古屋": '35.1815',
-    "大阪": '34.6937',
-    "広島": '34.4',
-    "高知": '33.5048',
-    "福岡": '33.6',
-    "那覇": '26.2167'
-}
-#経度
-citycodes_longitude = {
-    "札幌": '141.35',
-    "仙台": '140.8667',
-    "新潟": '139.0059',
-    "東京": '139.6917',
-    "金沢": '136.6167',
-    "名古屋": '136.9064',
-    "名古屋": '136.9064',
-    "大阪": '135.5022',
-    "広島": '132.45',
-    "高知": '133.4447',
-    "福岡": '130.4167',
-    "那覇": '127.6833'
-}
+
 
 @client.event
 async def on_ready():
