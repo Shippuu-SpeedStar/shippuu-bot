@@ -50,9 +50,11 @@ async def on_message(message):
         await message.channel.send("こんにちは！")
     elif client.user in message.mentions: # 話しかけられたかの判定
         await message.channel.send(f'{message.author.mention} 呼びましたか？') # 返信メッセージを送信
-    elif message.content == "いいね":
+    elif message.content == "いいね" or message.content == "いいね！":
         emoji ="👍"
         await message.add_reaction(emoji)
+    elif message.content == "おめでとう" or message.content == "おめでとう！":
+        await message.channel.send("おめでとうございます！")
     elif reg_res:
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
