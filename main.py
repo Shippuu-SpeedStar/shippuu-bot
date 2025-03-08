@@ -34,19 +34,19 @@ async def member_count(message):
                           description="Example Embed for Advent Calendar", # Embedの説明文 必要に応じて
                           url="https://tamgamecreator.github.io/NO.04" # これを設定すると、タイトルが指定URLへのリンクになる
                           )
-    embed.set_author(name=client.user, # Botのユーザー名
+    help_message.set_author(name=client.user, # Botのユーザー名
                      url="https://tamgamecreator.github.io/NO.04", # titleのurlのようにnameをリンクにできる。botのWebサイトとかGithubとか
                      icon_url=client.user.avatar_url # Botのアイコンを設定してみる
                      )
 
-    embed.set_thumbnail(url="https://tamgamecreator.github.io/NO.04/data/image01.png") # サムネイルとして小さい画像を設定できる
+    help_message.set_thumbnail(url="https://tamgamecreator.github.io/NO.04/data/image01.png") # サムネイルとして小さい画像を設定できる
 
-    embed.set_image(url="https://tamgamecreator.github.io/NO.04/data/image03.png") # 大きな画像タイルを設定できる
+    help_message.set_image(url="https://tamgamecreator.github.io/NO.04/data/image03.png") # 大きな画像タイルを設定できる
 
-    embed.add_field(name="フィールド１",value="値１") # フィールドを追加。
-    embed.add_field(name="フィールド２",value="値２")
+    help_message.add_field(name="フィールド１",value="値１") # フィールドを追加。
+    help_message.add_field(name="フィールド２",value="値２")
 
-    embed.set_footer(text="made by nashiroaoi", # フッターには開発者の情報でも入れてみる
+    help_message.set_footer(text="made by nashiroaoi", # フッターには開発者の情報でも入れてみる
                      icon_url="https://tamgamecreator.github.io/update/data/Icon01.png")
     await message.channel.send(embed=help_message) # embedの送信には、embed={定義したembed名}
         
