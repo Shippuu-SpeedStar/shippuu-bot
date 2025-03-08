@@ -46,6 +46,9 @@ async def on_message(message):
     reg_res = re.compile(u"疾風、(.+)の天気は？").search(message.content)
     if message.author.bot:
         return
+    if message.channel.id == 1345388449644937306:
+        emoji ="👍"
+        await message.add_reaction(emoji)
     elif message.content == "こんにちは":
         await message.channel.send("こんにちは！")
     elif client.user in message.mentions: # 話しかけられたかの判定
