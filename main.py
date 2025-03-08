@@ -61,7 +61,7 @@ async def on_message(message):
         f"疾風スピードスターを盛り上げるために作成されました。"
         f"よろしくお願いします👍"
         )
-        await message.channel.send(jikosyokai！)
+        await message.channel.send(jikosyokai)
     elif reg_res:
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
