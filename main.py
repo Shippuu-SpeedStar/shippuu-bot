@@ -6,6 +6,7 @@ import openmeteo_requests
 import requests_cache
 import pandas as pd
 from retry_requests import retry
+import re
 
 intents=discord.Intents.all()
 intents.message_content = True
