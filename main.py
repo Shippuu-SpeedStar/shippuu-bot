@@ -43,7 +43,7 @@ async def member_count(message):
         
 @client.event
 async def on_message(message):
-    reg_res = re.compile(u"Bot君、(.+)の天気は？").search(message.content)
+    reg_res = re.compile(u"疾風、(.+)の天気は？").search(message.content)
     if message.author.bot:
         return
     elif message.content == "こんにちは":
@@ -53,8 +53,15 @@ async def on_message(message):
     elif message.content == "いいね" or message.content == "いいね！":
         emoji ="👍"
         await message.add_reaction(emoji)
-    elif message.content == "おめでとう" or message.content == "おめでとう！":
+    elif message.content == "おめでとう":
         await message.channel.send("おめでとうございます！")
+    elif message.content == "疾風、自己紹介":
+        jikosyokai = (
+        f"こんにちは！疾風です！\n"
+        f"疾風スピードスターを盛り上げるために作成されました。"
+        f"よろしくお願いします👍"
+        )
+        await message.channel.send(jikosyokai！)
     elif reg_res:
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
