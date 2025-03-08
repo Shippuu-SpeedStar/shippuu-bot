@@ -38,7 +38,7 @@ citycodes_longitude = {
     "那覇": '127.6833'
 }
 
-async def on_message(reg_res):
+def on_message(reg_res):
     if reg_res.group(1) in citycodes_latitude.keys():
       citycode_latitude = citycodes_latitude[reg_res.group(1)]
       citycode_longitude = citycodes_longitude[reg_res.group(1)]
