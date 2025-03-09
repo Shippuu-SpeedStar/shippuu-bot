@@ -4,6 +4,7 @@ from keep_alive import keep_alive
 from discord import app_commands
 import weather
 import re
+import asyncio
 
 intents=discord.Intents.all()
 intents.message_content = True
