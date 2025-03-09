@@ -5,6 +5,7 @@ from discord import app_commands
 import weather
 import re
 import asyncio
+from datetime import datetime, timedelta
 
 intents=discord.Intents.all()
 intents.message_content = True
@@ -36,7 +37,7 @@ async def help_command(message):
                           )
     help_message.add_field(name="/help",value="今表示しているものです。", inline=False) # フィールドを追加。
     help_message.add_field(name="/membercount",value="サーバー参加人数を表示します。", inline=False)
-
+    help_message.add_field(name="/omikuji",value="おみくじ引けます", inline=False)
     help_message.set_footer(text="made by TAM Game Creator", # フッターには開発者の情報でも入れてみる
                      icon_url="https://tamgamecreator.github.io/update/data/Icon01.png")
     await message.response.send_message(embed=help_message) # embedの送信には、embed={定義したembed名}
@@ -53,10 +54,25 @@ async def on_message(message):
         emoji ="👍"
         await message.add_reaction(emoji)
     elif message.author.id == 761562078095867916 and message.channel.id == 1256492536004870154:
-        await asyncio.sleep(3600)  # 1時間（3600秒）待つ
+        wait_time = 3600  # 1時間待機
+        notify_time = datetime.now() + timedelta(seconds=wait_time)
+        # 通知予定時間が午前0時～7時ならキャンセル
+        if 0 <= notify_time.hour < 7:
+            await message.channel.send("待機後の時間が深夜のため通知をキャンセルします。")
+            return
+        await asyncio.sleep(wait_time)  # 1時間（3600秒）待つ
+        if 0 <= datetime.now().hour < 7:#念のため待機後もチェック
+            return
         await message.channel.send(f"{message.author.mention} ディス速の時間です！")
     elif message.author.id == 302050872383242240 and message.channel.id == 1256492536004870154:
-        await asyncio.sleep(7200)  # 2時間（7200秒）待つ
+        wait_time = 7200  # 2時間待機
+        notify_time = datetime.now() + timedelta(seconds=wait_time)
+        if 0 <= notify_time.hour < 7:
+            await message.channel.send("待機後の時間が深夜のため通知をキャンセルします。")
+            return
+        await asyncio.sleep(wait_time)  # 2時間（7200秒）待つ
+        if 0 <= datetime.now().hour < 7:#念のため待機後もチェック
+            return
         await message.channel.send(f"{message.author.mention} Bumpの時間です！")
     elif message.content == "こんにちは":
         await message.channel.send("こんにちは！")
