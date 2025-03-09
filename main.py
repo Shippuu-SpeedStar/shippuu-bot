@@ -60,7 +60,7 @@ async def on_message(message):
         if 0 <= notify_time.hour < 7:
             await message.channel.send("待機後の時間が深夜のため通知をキャンセルします。")
             return
-        await message.channel.send("1時間後にお知らせします！")
+        await message.channel.send(f"{notify_time} にお知らせします！")
         await asyncio.sleep(wait_time)  # 1時間（3600秒）待つ
         if 0 <= datetime.now().hour < 7:#念のため待機後もチェック
             return
@@ -71,7 +71,7 @@ async def on_message(message):
         if 0 <= notify_time.hour < 7:
             await message.channel.send("待機後の時間が深夜のため通知をキャンセルします。")
             return
-        await message.channel.send("2時間後にお知らせします！")
+        await message.channel.send(f"{notify_time} にお知らせします！")
         await asyncio.sleep(wait_time)  # 2時間（7200秒）待つ
         if 0 <= datetime.now().hour < 7:#念のため待機後もチェック
             return
