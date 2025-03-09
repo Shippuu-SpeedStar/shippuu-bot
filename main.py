@@ -46,7 +46,7 @@ async def omikuji_command(message):
 @client.event
 async def on_message(message):
     reg_res = re.compile(u"疾風、(.+)の天気は？").search(message.content)
-    if message.author.bot:
+    if message.author == client.user:
         return
     if message.channel.id == 1236670753165021204:#自己紹介チャンネルに自動で絵文字
         emoji ="👍"
