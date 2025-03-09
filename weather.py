@@ -78,7 +78,7 @@ def on_message(reg_res):
         f"💨 風速: {wind_speed:.1f} m/s\n"
         f"🧭 風向: {wind_dir_text} ({wind_direction:.1f}°)\n"
         f"🌞 最高気温: {temp_max:.1f}°C\n"
-        f"❄ 最低気温: {temp_min:.1f}°C\n"
+        f"❄️ 最低気温: {temp_min:.1f}°C\n"
         f"🌧 降水確率: {precip_prob:.1f}%\n"
         f"-# 緯度: {citycode_latitude}° 経度: {citycode_longitude}°"
       )
