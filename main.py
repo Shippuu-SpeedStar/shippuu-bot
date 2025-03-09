@@ -10,7 +10,6 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-
 @client.event
 async def on_ready():
     print('ログインしました')
@@ -40,15 +39,22 @@ async def help_command(message):
     help_message.set_footer(text="made by TAM Game Creator", # フッターには開発者の情報でも入れてみる
                      icon_url="https://tamgamecreator.github.io/update/data/Icon01.png")
     await message.response.send_message(embed=help_message) # embedの送信には、embed={定義したembed名}
-        
+@tree.command(name='omikuji', description='おみくじ引きます') 
+async def omikuji_command(message):
+    choice = random.choice(['大吉','中吉', '吉', '小吉','末吉', '凶', '大凶'])
+    await message.response.send_message(f"あなたの今日の運勢は **{choice}** です!")
 @client.event
 async def on_message(message):
     reg_res = re.compile(u"疾風、(.+)の天気は？").search(message.content)
     if message.author.bot:
         return
-    if message.channel.id == 1236670753165021204:
+    if message.channel.id == 1236670753165021204:#自己紹介チャンネルに自動で絵文字
         emoji ="👍"
         await message.add_reaction(emoji)
+    elif message.author.id == 761562078095867916 and message.channel.id == 1256492536004870154:
+        await message.channel.send("1分後にメッセージを送信します！")
+        await asyncio.sleep(60)  # 1時間（3600秒）待つ
+        await message.channel.send(f"{message.author.mention} 1分経過しました！")
     elif message.content == "こんにちは":
         await message.channel.send("こんにちは！")
     elif client.user in message.mentions: # 話しかけられたかの判定
@@ -61,10 +67,12 @@ async def on_message(message):
     elif message.content == "疾風、自己紹介":
         jikosyokai = (
         f"こんにちは！疾風です！\n"
-        f"疾風スピードスターを盛り上げるために作成されました。"
+        f"疾風スピードスターを盛り上げるために作成されました。\n"
         f"よろしくお願いします👍"
         )
         await message.channel.send(jikosyokai)
+    elif message.content == "疾風ありがとう":
+        await message.channel.send("どういたしまして！👍")
     elif reg_res:
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
