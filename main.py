@@ -77,7 +77,6 @@ async def on_message(message):
         if message.author.id in user_tasks:
             await message.channel.send("すでに待機中です！")
         else:
-            await message.channel.send("1時間後にメッセージを送信します！")
             task = asyncio.create_task(delayed_message(message.channel, message.author))
             user_tasks[message.author.id] = task  # タスクを管理
     elif message.author.id == 302050872383242240 and message.channel.id == 1256492536004870154:
