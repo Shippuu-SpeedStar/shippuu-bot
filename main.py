@@ -53,9 +53,11 @@ async def on_message(message):
         emoji ="👍"
         await message.add_reaction(emoji)
     elif message.author.id == 761562078095867916 and message.channel.id == 1256492536004870154:
-        await message.channel.send("1分後にメッセージを送信します！")
-        await asyncio.sleep(60)  # 1時間（3600秒）待つ
-        await message.channel.send(f"{message.author.mention} 1分経過しました！")
+        await asyncio.sleep(3600)  # 1時間（3600秒）待つ
+        await message.channel.send(f"{message.author.mention} ディス速の時間です！")
+    elif message.author.id == 302050872383242240 and message.channel.id == 1256492536004870154:
+        await asyncio.sleep(7200)  # 2時間（7200秒）待つ
+        await message.channel.send(f"{message.author.mention} Bumpの時間です！")
     elif message.content == "こんにちは":
         await message.channel.send("こんにちは！")
     elif client.user in message.mentions: # 話しかけられたかの判定
