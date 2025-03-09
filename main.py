@@ -5,12 +5,13 @@ from discord import app_commands
 import weather
 import re
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 intents=discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
+JST = timezone(timedelta(hours=9))  # 日本時間（UTC+9）
 
 @client.event
 async def on_ready():
@@ -55,25 +56,27 @@ async def on_message(message):
         await message.add_reaction(emoji)
     elif message.author.id == 761562078095867916 and message.channel.id == 1256492536004870154:
         wait_time = 3600  # 1時間待機
-        notify_time = datetime.now() + timedelta(seconds=wait_time)
+        notify_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST) + timedelta(seconds=wait_time)
         # 通知予定時間が午前0時～7時ならキャンセル
         if 0 <= notify_time.hour < 7:
             await message.channel.send("待機後の時間が深夜のため通知をキャンセルします。")
             return
         await message.channel.send(f"{notify_time} にお知らせします！")
         await asyncio.sleep(wait_time)  # 1時間（3600秒）待つ
-        if 0 <= datetime.now().hour < 7:#念のため待機後もチェック
+        current_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST)
+        if 0 <= current_time.hour < 7:#念のため待機後もチェック
             return
         await message.channel.send(f"{message.author.mention} ディス速の時間です！")
     elif message.author.id == 302050872383242240 and message.channel.id == 1256492536004870154:
         wait_time = 7200  # 2時間待機
-        notify_time = datetime.now() + timedelta(seconds=wait_time)
+        notify_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST) + timedelta(seconds=wait_time)
         if 0 <= notify_time.hour < 7:
             await message.channel.send("待機後の時間が深夜のため通知をキャンセルします。")
             return
         await message.channel.send(f"{notify_time} にお知らせします！")
         await asyncio.sleep(wait_time)  # 2時間（7200秒）待つ
-        if 0 <= datetime.now().hour < 7:#念のため待機後もチェック
+        current_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST)
+        if 0 <= current_time.hour.hour < 7:#念のため待機後もチェック
             return
         await message.channel.send(f"{message.author.mention} Bumpの時間です！")
     elif message.content == "こんにちは":
