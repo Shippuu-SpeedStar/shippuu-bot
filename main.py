@@ -4,6 +4,7 @@ from keep_alive import keep_alive
 from discord import app_commands
 import weather
 import re
+import random
 import asyncio
 from datetime import datetime, timedelta, timezone
 
