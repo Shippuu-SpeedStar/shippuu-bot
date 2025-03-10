@@ -55,7 +55,7 @@ async def on_message(message):
         emoji ="👍"
         await message.add_reaction(emoji)
     elif message.author.id == 761562078095867916 and message.channel.id == 1256492536004870154:
-        wait_time = 60  # 1時間待機
+        wait_time = 3600  # 1時間待機
         notify_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST) + timedelta(seconds=wait_time)
         # 通知予定時間が午前0時～7時ならキャンセル
         if 0 <= notify_time.hour < 7:
