@@ -4,7 +4,6 @@ from keep_alive import keep_alive
 from discord import app_commands
 import weather
 import re
-import random
 import asyncio
 from datetime import datetime, timedelta, timezone
 
@@ -12,27 +11,7 @@ intents=discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-#ディス速の管理
 JST = timezone(timedelta(hours=9))  # 日本時間（UTC+9）
-user_tasks = {}
-async def delayed_message(channel, user):
-    wait_time = 120  # 1時間待機
-    notify_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST) + timedelta(seconds=wait_time)
-    # 通知予定時刻が午前0時～7時ならキャンセル
-    if 0 <= notify_time.hour < 7:
-        await channel.send("待機後の時間が深夜のため通知をキャンセルします。")
-        user_tasks.pop(user.id, None)  # タスクを削除
-        return
-    await channel.send("1時間後にお知らせします！")
-    await asyncio.sleep(wait_time)
-    # 再度、日本時間でチェック（念のため）
-    current_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST)
-    current_time_hour = current_time.hour
-    if 0 <= current_time_hour < 7:
-        user_tasks.pop(user.id, None)
-        return
-    await channel.send(f"{message.author.mention} ディス速の時間です！")
-    user_tasks.pop(user.id, None)  # タスク完了後に削除
 
 @client.event
 async def on_ready():
@@ -76,11 +55,15 @@ async def on_message(message):
         emoji ="👍"
         await message.add_reaction(emoji)
     elif message.author.id == 761562078095867916 and message.channel.id == 1256492536004870154:
-        if message.author.id in user_tasks:
-            await message.channel.send("すでに待機中です！")
-        else:
-            task = asyncio.create_task(delayed_message(message.channel, message.author))
-            user_tasks[message.author.id] = task  # タスクを管理
+        wait_time = 60  # 1時間待機
+        notify_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST) + timedelta(seconds=wait_time)
+        # 通知予定時間が午前0時～7時ならキャンセル
+        if 0 <= notify_time.hour < 7:
+            await message.channel.send("待機後の時間が深夜のため通知をキャンセルします。")
+            return
+        await message.channel.send("1時間後にお知らせします！")
+        await asyncio.sleep(wait_time)  # 1時間（3600秒）待つ
+        await message.channel.send(f"{message.author.mention} ディス速の時間です！")
     elif message.author.id == 302050872383242240 and message.channel.id == 1256492536004870154:
         wait_time_bump = 7200  # 2時間待機
         notify_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST) + timedelta(seconds=wait_time_bump)
@@ -89,9 +72,6 @@ async def on_message(message):
             return
         await message.channel.send("2時間後にお知らせします！")
         await asyncio.sleep(wait_time_bump)  # 2時間（7200秒）待つ
-        current_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST)
-        if 0 <= current_time.hour.hour < 7:#念のため待機後もチェック
-            return
         await message.channel.send(f"{message.author.mention} Bumpの時間です！")
     elif message.content == "こんにちは":
         await message.channel.send("こんにちは！")
