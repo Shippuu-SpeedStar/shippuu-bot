@@ -11,7 +11,6 @@ intents=discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-JST = timezone(timedelta(hours=9))  # 日本時間（UTC+9）
 
 @client.event
 async def on_ready():
