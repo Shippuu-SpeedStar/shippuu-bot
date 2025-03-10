@@ -24,6 +24,7 @@ async def delayed_message(channel, user):
         user_tasks.pop(user.id, None)  # タスクを削除
         return
     await channel.send("1時間後にお知らせします！")
+    await channel.send(current_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST))
     await asyncio.sleep(wait_time)
     # 再度、日本時間でチェック（念のため）
     current_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST)
