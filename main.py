@@ -16,7 +16,7 @@ tree = app_commands.CommandTree(client)
 JST = timezone(timedelta(hours=9))  # 日本時間（UTC+9）
 user_tasks = {}
 async def delayed_message(channel, user):
-    wait_time = 3600  # 1時間待機
+    wait_time = 120  # 1時間待機
     notify_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST) + timedelta(seconds=wait_time)
     # 通知予定時刻が午前0時～7時ならキャンセル
     if 0 <= notify_time.hour < 7:
@@ -24,14 +24,11 @@ async def delayed_message(channel, user):
         user_tasks.pop(user.id, None)  # タスクを削除
         return
     await channel.send("1時間後にお知らせします！")
-    current_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST)
-    await channel.send(current_time)
-    current_time_hour = current_time.hour;
-    await channel.send(current_time_hour)
     await asyncio.sleep(wait_time)
     # 再度、日本時間でチェック（念のため）
     current_time = datetime.utcnow().replace(tzinfo=timezone.utc).astimezone(JST)
-    if 0 <= current_time.hour < 7:
+    current_time_hour = current_time.hour
+    if 0 <= current_time_hour < 7:
         user_tasks.pop(user.id, None)
         return
     await channel.send(f"{message.author.mention} ディス速の時間です！")
