@@ -5,7 +5,7 @@ from discord import app_commands
 import weather
 import re
 import asyncio
-from datetime import datetime, timedelta, timezone
+import random
 
 intents=discord.Intents.all()
 intents.message_content = True
