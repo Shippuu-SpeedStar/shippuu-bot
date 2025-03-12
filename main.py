@@ -58,7 +58,7 @@ async def omikuji_command(interaction: discord.Interaction):
         return
     # おみくじを引く
     choice = random.choice(['大吉', '中吉', '吉', '小吉', '末吉', '凶', '大凶'])
-    await interaction.response.send_message(f"🎴 あなたの今日の運勢は **{choice}** です！")
+    await interaction.response.send_message(f"あなたの今日の運勢は **{choice}** です！")
     # 今日の日付を記録
     last_omikuji[user_id] = now
 @client.event
