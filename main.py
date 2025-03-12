@@ -45,6 +45,9 @@ async def help_command(message):
 async def omikuji_command(message):
     choice = random.choice(['大吉','中吉', '吉', '小吉','末吉', '凶', '大凶'])
     await message.response.send_message(f"あなたの今日の運勢は **{choice}** です!")
+@tree.command(name="test",description="テストコマンドです。")
+async def test_command(interaction: discord.Interaction):
+    await interaction.response.send_message("てすと！",ephemeral=True)
 @client.event
 async def on_message(message):
     reg_res = re.compile(u"疾風、(.+)の天気は？").search(message.content)
