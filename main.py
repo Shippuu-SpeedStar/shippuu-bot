@@ -6,11 +6,18 @@ import weather
 import re
 import asyncio
 import random
+from datetime import datetime, timezone, timedelta
 
 intents=discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
+
+# 日本時間（JST）
+JST = timezone(timedelta(hours=9))
+
+# おみくじの履歴を保存する辞書
+last_omikuji = {}
 
 @client.event
 async def on_ready():
@@ -42,12 +49,18 @@ async def help_command(message):
                      icon_url="https://tamgamecreator.github.io/update/data/Icon01.png")
     await message.response.send_message(embed=help_message) # embedの送信には、embed={定義したembed名}
 @tree.command(name='omikuji', description='おみくじ引きます') 
-async def omikuji_command(message):
-    choice = random.choice(['大吉','中吉', '吉', '小吉','末吉', '凶', '大凶'])
-    await message.response.send_message(f"あなたの今日の運勢は **{choice}** です!")
-@tree.command(name="test",description="テストコマンドです。")
-async def test_command(interaction: discord.Interaction):
-    await interaction.response.send_message("てすと！",ephemeral=True)
+async def omikuji_command(interaction: discord.Interaction):
+    user_id = interaction.user.id
+    now = datetime.now(JST).date()  # 今日の日付（JST）
+    # すでに引いているかチェック
+    if user_id in last_omikuji and last_omikuji[user_id] == now:
+        await interaction.response.send_message("⚠️ おみくじは1日1回までです！明日また引いてください！", ephemeral=True)
+        return
+    # おみくじを引く
+    choice = random.choice(['大吉', '中吉', '吉', '小吉', '末吉', '凶', '大凶'])
+    await interaction.response.send_message(f"🎴 あなたの今日の運勢は **{choice}** です！")
+    # 今日の日付を記録
+    last_omikuji[user_id] = now
 @client.event
 async def on_message(message):
     reg_res = re.compile(u"疾風、(.+)の天気は？").search(message.content)
