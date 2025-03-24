@@ -69,7 +69,7 @@ async def random_number(interaction: discord.Interaction, min_value: int, max_va
         await interaction.response.send_message("⚠️ 最小値が最大値より大きいです。もう一度入力してください。", ephemeral=True)
         return
     result = random.randint(min_value, max_value)
-    await interaction.response.send_message(f"🎲 ランダムな数値: **{result}**（{min_value} 〜 {max_value}）")
+    await interaction.response.send_message(f"⚡ ランダムな数値: **{result}**（{min_value} 〜 {max_value}）")
     
 @client.event
 async def on_message(message):
