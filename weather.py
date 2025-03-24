@@ -68,6 +68,7 @@ def on_message(reg_res):
       responses = openmeteo.weather_api(url, params=params)
       response = responses[0]
       # 最新の天気データを取得
+      current = response.Current()
       current_precipitation = current.Variables(0).Value()
       current_rain = current.Variables(1).Value()
       current_temperature_2m = current.Variables(2).Value()
