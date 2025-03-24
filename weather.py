@@ -61,7 +61,7 @@ def on_message(reg_res):
       "latitude": citycode_latitude,  # 東京の緯度
       "longitude": citycode_longitude,  # 東京の経度
       "current": ["precipitation", "rain", "temperature_2m", "relative_humidity_2m", "wind_speed_10m", "wind_direction_10m"],
-      "forecast_days": 1
+      "forecast_days": 1,
       "wind_speed_unit": "ms",
       "timezone": "Asia/Tokyo"
       }
