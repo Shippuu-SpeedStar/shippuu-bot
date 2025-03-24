@@ -83,12 +83,8 @@ def on_message(reg_res):
         f"📍 **{reg_res.group(1)}の天気情報**\n"
         f"🌡 気温: {current_temperature_2m:.1f}°C\n"
         f"☔ 降水量: {current_precipitation:.1f} mm\n"
-        #f"☁️ 雲量: {cloud_cover:.1f}%\n"
         f"💨 風速: {current_wind_speed_10m:.1f} m/s\n"
         f"🧭 風向: {wind_dir_text} ({current_wind_direction_10m:.1f}°)\n"
-        #f"🌞 最高気温: {temp_max:.1f}°C\n"
-        #f"❄️ 最低気温: {temp_min:.1f}°C\n"
-        #f"🌧 降水確率: {precip_prob:.1f}%\n"
         f"-# 緯度: {citycode_latitude}° 経度: {citycode_longitude}°"
       )
       return weather_message
