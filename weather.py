@@ -78,7 +78,7 @@ def on_message(reg_res):
       # 風向きを変換
       current_wind_direction_10m = ["北", "北北東", "北東", "東北東", "東", "東南東", "南東", "南南東",
                     "南", "南南西", "南西", "西南西", "西", "西北西", "北西", "北北西"]
-      wind_dir_text = current_wind_direction_10m[int((wind_direction + 11.25) / 22.5) % 16]
+      wind_dir_text = current_wind_direction_10m[int((current_wind_direction_10m + 11.25) / 22.5) % 16]
       # Discordに天気情報を送信
       weather_message = (
         f"📍 **{reg_res.group(1)}の天気情報**\n"
