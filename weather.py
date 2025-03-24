@@ -84,15 +84,17 @@ def on_message(reg_res):
       wind_dir_text = wind_directions[int((current_wind_direction_10m + 11.25) / 22.5) % 16]
       #時間ごと
       hourly = response.Hourly()
-      hourly_precipitation_probability = hourly.Variables(0).ValuesAsNumpy()
+      hourly_precipitation_probability = hourly.Variables(0).Value()
       #日ごと
       daily = response.Daily()
-      daily_temperature_2m_min = daily.Variables(0).ValuesAsNumpy()
-      daily_temperature_2m_max = daily.Variables(1).ValuesAsNumpy()
+      daily_temperature_2m_min = daily.Variables(0).Value()
+      daily_temperature_2m_max = daily.Variables(1).Value()
       # Discordに天気情報を送信
       weather_message = (
         f"📍 **{reg_res.group(1)}の天気情報**\n"
         f"🌡 気温: {current_temperature_2m:.1f}°C\n"
+        f"🌞 最高気温: {daily_temperature_2m_max:.1f}°C\n"
+        f"❄️ 最低気温: {daily_temperature_2m_min:.1f}°C\n"
         f"☔ 降水量: {current_precipitation:.1f} mm\n"
         f"💨 風速: {current_wind_speed_10m:.1f} m/s\n"
         f"🧭 風向: {wind_dir_text} ({current_wind_direction_10m:.1f}°)\n"
