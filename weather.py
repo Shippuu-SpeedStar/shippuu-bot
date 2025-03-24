@@ -51,7 +51,13 @@ citycodes_longitude = {
     "西表島": '24.3333',#ここからネタ枠
     "志布志市志布志町志布志": '131.1011'#ここからネタ枠
 }
-
+# 天気コードを日本語に変換する辞書（オプション）
+WEATHER_CODES = {
+    0: "☀️ 晴れ", 1: "🌤️ 晴れ時々曇り", 2: "⛅ 曇り", 3: "☁️ 曇り",
+    45: "🌫️ 霧", 48: "🌫️ 霧氷", 51: "🌦️ 霧雨", 53: "🌧️ 霧雨（中）", 55: "🌧️ 霧雨（強）",
+    61: "🌦️ 弱い雨", 63: "🌧️ 中程度の雨", 65: "🌧️ 強い雨",
+    80: "🌦️ にわか雨", 81: "🌧️ にわか雨（中）", 82: "🌧️ にわか雨（強）"
+}
 def on_message(reg_res):
     if reg_res.group(1) in citycodes_latitude.keys():
       citycode_latitude = citycodes_latitude[reg_res.group(1)]
@@ -62,7 +68,7 @@ def on_message(reg_res):
       "longitude": citycode_longitude,  # 東京の経度
       "daily": ["temperature_2m_min", "temperature_2m_max"],
 	  "hourly": "precipitation_probability",
-	  "current": ["precipitation", "rain", "temperature_2m", "relative_humidity_2m", "wind_speed_10m", "wind_direction_10m", "cloud_cover"],
+	  "current": ["precipitation", "rain", "temperature_2m", "relative_humidity_2m", "wind_speed_10m", "wind_direction_10m", "cloud_cover", "weather_code"],
       "forecast_days": 1,
       "wind_speed_unit": "ms",
       "timezone": "Asia/Tokyo"
@@ -77,11 +83,14 @@ def on_message(reg_res):
       current_relative_humidity_2m = current.Variables(3).Value()
       current_wind_speed_10m = current.Variables(4).Value()
       current_wind_direction_10m = current.Variables(5).Value()
-      current_cloud_cover  = current.Variables(5).Value()
+      current_cloud_cover  = current.Variables(6).Value()
+      current_weather_code  = current.Variables(7).Value()
       # 風向きを変換
       wind_directions = ["北", "北北東", "北東", "東北東", "東", "東南東", "南東", "南南東",
                     "南", "南南西", "南西", "西南西", "西", "西北西", "北西", "北北西"]
       wind_dir_text = wind_directions[int((current_wind_direction_10m + 11.25) / 22.5) % 16]
+      # 天気コードの変換（辞書にない場合はそのまま表示）
+      weather_text = WEATHER_CODES.get(weather_code, f"🌤️天気コード: {weather_code}")
       #時間ごと
       hourly = response.Hourly()
       hourly_precipitation_probability = hourly.Variables(0).Value()
@@ -92,6 +101,7 @@ def on_message(reg_res):
       # Discordに天気情報を送信
       weather_message = (
         f"📍 **{reg_res.group(1)}の天気情報**\n"
+	f"{weather_text}\n"
         f"🌡 気温: {current_temperature_2m:.1f}°C\n"
         f"🌞 最高気温: {daily_temperature_2m_max:.1f}°C\n"
         f"❄️ 最低気温: {daily_temperature_2m_min:.1f}°C\n"
