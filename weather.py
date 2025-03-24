@@ -93,11 +93,11 @@ def on_message(reg_res):
       weather_text = WEATHER_CODES.get(current_weather_code, f"🌤️天気コード: {current_weather_code}")
       #時間ごと
       hourly = response.Hourly()
-      hourly_precipitation_probability = hourly.Variables(0).Value()
+      hourly_precipitation_probability = hourly.Variables(0).ValuesAsNumpy()[0]
       #日ごと
       daily = response.Daily()
-      daily_temperature_2m_min = daily.Variables(0).Value()
-      daily_temperature_2m_max = daily.Variables(1).Value()
+      daily_temperature_2m_min = daily.Variables(0).ValuesAsNumpy()[0]
+      daily_temperature_2m_max = daily.Variables(1).ValuesAsNumpy()[0]
       # Discordに天気情報を送信
       weather_message = (
         f"📍 **{reg_res.group(1)}の天気情報**\n"
