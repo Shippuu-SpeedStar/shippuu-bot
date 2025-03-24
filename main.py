@@ -61,7 +61,7 @@ async def omikuji_command(interaction: discord.Interaction):
     await interaction.response.send_message(f"あなたの今日の運勢は **{choice}** です！")
     # 今日の日付を記録
     last_omikuji[user_id] = now
-@bot.tree.command(name="random_number", description="指定した範囲内でランダムな数値を生成します")
+@tree.command(name="random_number", description="指定した範囲内でランダムな数値を生成します")
 @app_commands.describe(min_value="最小値", max_value="最大値")
 async def random_number(interaction: discord.Interaction, min_value: int, max_value: int):
     """ 指定範囲内のランダムな数値を送信 """
