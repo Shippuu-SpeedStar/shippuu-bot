@@ -90,7 +90,7 @@ def on_message(reg_res):
                     "南", "南南西", "南西", "西南西", "西", "西北西", "北西", "北北西"]
       wind_dir_text = wind_directions[int((current_wind_direction_10m + 11.25) / 22.5) % 16]
       # 天気コードの変換（辞書にない場合はそのまま表示）
-      weather_text = WEATHER_CODES.get(weather_code, f"🌤️天気コード: {current_weather_code}")
+      weather_text = WEATHER_CODES.get(current_weather_code, f"🌤️天気コード: {current_weather_code}")
       #時間ごと
       hourly = response.Hourly()
       hourly_precipitation_probability = hourly.Variables(0).Value()
