@@ -68,7 +68,7 @@ def on_message(reg_res):
       "longitude": citycode_longitude,  # 東京の経度
       "daily": ["temperature_2m_min", "temperature_2m_max"],
 	  "hourly": "precipitation_probability",
-	  "current": ["precipitation", "rain", "temperature_2m", "relative_humidity_2m", "wind_speed_10m", "wind_direction_10m", "cloud_cover", "weather_code"],
+	  "current": ["precipitation", "temperature_2m", "relative_humidity_2m", "wind_speed_10m", "wind_direction_10m", "cloud_cover", "weather_code"],
       "forecast_days": 1,
       "wind_speed_unit": "ms",
       "timezone": "Asia/Tokyo"
@@ -78,13 +78,12 @@ def on_message(reg_res):
       # 最新の天気データを取得
       current = response.Current()
       current_precipitation = current.Variables(0).Value()
-      current_rain = current.Variables(1).Value()
-      current_temperature_2m = current.Variables(2).Value()
-      current_relative_humidity_2m = current.Variables(3).Value()
-      current_wind_speed_10m = current.Variables(4).Value()
-      current_wind_direction_10m = current.Variables(5).Value()
-      current_cloud_cover  = current.Variables(6).Value()
-      current_weather_code  = current.Variables(7).Value()
+      current_temperature_2m = current.Variables(1).Value()
+      current_relative_humidity_2m = current.Variables(2).Value()
+      current_wind_speed_10m = current.Variables(3).Value()
+      current_wind_direction_10m = current.Variables(4).Value()
+      current_cloud_cover  = current.Variables(5).Value()
+      current_weather_code  = current.Variables(6).Value()
       # 風向きを変換
       wind_directions = ["北", "北北東", "北東", "東北東", "東", "東南東", "南東", "南南東",
                     "南", "南南西", "南西", "西南西", "西", "西北西", "北西", "北北西"]
@@ -103,14 +102,14 @@ def on_message(reg_res):
         f"📍 **{reg_res.group(1)}の天気情報**\n"
 	f"{weather_text}\n"
         f"🌡 気温: {current_temperature_2m:.1f}°C\n"
-        f" {current_rain}\n"
         f"🌞 最高気温: {daily_temperature_2m_max:.1f}°C\n"
         f"❄️ 最低気温: {daily_temperature_2m_min:.1f}°C\n"
+        f"💧 湿度: {current_relative_humidity_2m:.1f}%\n"
         f"☔ 降水量: {current_precipitation:.1f} mm\n"
+        f"🌧️ 降水確率: {hourly_precipitation_probability:.1f}%\n"
         f"💨 風速: {current_wind_speed_10m:.1f} m/s\n"
         f"🧭 風向: {wind_dir_text} ({current_wind_direction_10m:.1f}°)\n"
         f"⛅ 雲量: {current_cloud_cover:.1f}%\n"
-        f"🌧️ 降水確率: {hourly_precipitation_probability:.1f}%\n"
         f"-# 緯度: {citycode_latitude}° 経度: {citycode_longitude}°"
       )
       return weather_message
