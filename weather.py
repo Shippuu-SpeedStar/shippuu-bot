@@ -60,7 +60,9 @@ def on_message(reg_res):
       params = {
       "latitude": citycode_latitude,  # 東京の緯度
       "longitude": citycode_longitude,  # 東京の経度
-      "current": ["precipitation", "rain", "temperature_2m", "relative_humidity_2m", "wind_speed_10m", "wind_direction_10m"],
+      "daily": ["temperature_2m_min", "temperature_2m_max"],
+	  "hourly": "precipitation_probability",
+	  "current": ["precipitation", "rain", "temperature_2m", "relative_humidity_2m", "wind_speed_10m", "wind_direction_10m", "cloud_cover"],
       "forecast_days": 1,
       "wind_speed_unit": "ms",
       "timezone": "Asia/Tokyo"
@@ -75,17 +77,29 @@ def on_message(reg_res):
       current_relative_humidity_2m = current.Variables(3).Value()
       current_wind_speed_10m = current.Variables(4).Value()
       current_wind_direction_10m = current.Variables(5).Value()
+      current_cloud_cover  = current.Variables(5).Value()
       # 風向きを変換
       wind_directions = ["北", "北北東", "北東", "東北東", "東", "東南東", "南東", "南南東",
                     "南", "南南西", "南西", "西南西", "西", "西北西", "北西", "北北西"]
       wind_dir_text = wind_directions[int((current_wind_direction_10m + 11.25) / 22.5) % 16]
+      #時間ごと
+      hourly = response.Hourly()
+      hourly_precipitation_probability = hourly.Variables(0).ValuesAsNumpy()
+      #日ごと
+      daily = response.Daily()
+      daily_temperature_2m_min = daily.Variables(0).ValuesAsNumpy()
+      daily_temperature_2m_max = daily.Variables(1).ValuesAsNumpy()
       # Discordに天気情報を送信
       weather_message = (
         f"📍 **{reg_res.group(1)}の天気情報**\n"
         f"🌡 気温: {current_temperature_2m:.1f}°C\n"
+        f"🌞 最高気温: {daily_temperature_2m_min:.1f}°C\n"
+        f"❄️ 最低気温: {daily_temperature_2m_max:.1f}°C\n"
         f"☔ 降水量: {current_precipitation:.1f} mm\n"
         f"💨 風速: {current_wind_speed_10m:.1f} m/s\n"
         f"🧭 風向: {wind_dir_text} ({current_wind_direction_10m:.1f}°)\n"
+        f"⛅ 雲量: {current_cloud_cover:.1f}%\n"
+        f"🌧️ 降水確率: {hourly_precipitation_probability:.1f}%\n"
         f"-# 緯度: {citycode_latitude}° 経度: {citycode_longitude}°"
       )
       return weather_message
