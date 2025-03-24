@@ -103,6 +103,7 @@ def on_message(reg_res):
         f"📍 **{reg_res.group(1)}の天気情報**\n"
 	f"{weather_text}\n"
         f"🌡 気温: {current_temperature_2m:.1f}°C\n"
+        f" {current_rain}\n"
         f"🌞 最高気温: {daily_temperature_2m_max:.1f}°C\n"
         f"❄️ 最低気温: {daily_temperature_2m_min:.1f}°C\n"
         f"☔ 降水量: {current_precipitation:.1f} mm\n"
