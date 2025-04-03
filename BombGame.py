@@ -1,6 +1,9 @@
 import discord
 import random
 
+# 爆弾の場所を記録する辞書
+bomb_location = {}
+
 class BombGame(discord.ui.View):
     """ 爆弾解除ゲームのボタン """
     def __init__(self, correct_button):
