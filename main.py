@@ -97,6 +97,8 @@ async def on_message(message):
         await message.channel.send(jikosyokai)
     elif message.content == "疾風ありがとう":
         await message.channel.send("どういたしまして！👍")
+    elif message.channel.id == 1347057189868539905 and message.author.bot:
+        await message.delete()
     elif reg_res:
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
