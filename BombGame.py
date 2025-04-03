@@ -1,3 +1,6 @@
+import discord
+import random
+
 class BombGame(discord.ui.View):
     """ 爆弾解除ゲームのボタン """
     def __init__(self, correct_button):
