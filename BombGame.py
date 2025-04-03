@@ -1,10 +1,8 @@
-import discord
-import random
-
 class BombGame(discord.ui.View):
-    def __init__(self):
+    """ 爆弾解除ゲームのボタン """
+    def __init__(self, correct_button):
         super().__init__()
-        self.correct_button = random.choice(["A", "B", "C"])  # 正解ボタンをランダムに設定
+        self.correct_button = correct_button
 
     @discord.ui.button(label="A", style=discord.ButtonStyle.primary)
     async def button_a(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -23,3 +21,28 @@ class BombGame(discord.ui.View):
             await interaction.response.edit_message(content=f"💣 **{interaction.user.name} が爆弾を解除した！🎉**", view=None)
         else:
             await interaction.response.edit_message(content=f"💥 **{interaction.user.name} のミス！爆発した…💀**", view=None)
+
+class BombSetup(discord.ui.View):
+    """ ユーザーが爆弾を仕掛けるボタン """
+    def __init__(self, user_id):
+        super().__init__()
+        self.user_id = user_id
+
+    @discord.ui.button(label="A にセット", style=discord.ButtonStyle.danger)
+    async def set_a(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.set_bomb(interaction, "A")
+
+    @discord.ui.button(label="B にセット", style=discord.ButtonStyle.danger)
+    async def set_b(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.set_bomb(interaction, "B")
+
+    @discord.ui.button(label="C にセット", style=discord.ButtonStyle.danger)
+    async def set_c(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.set_bomb(interaction, "C")
+
+    async def set_bomb(self, interaction, choice):
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message("この爆弾はあなたが仕掛けるものではありません！", ephemeral=True)
+            return
+        bomb_location[interaction.channel.id] = choice
+        await interaction.response.edit_message(content=f"💣 **爆弾が {choice} にセットされた！**\n他の人は解除を試みよう！", view=None)
