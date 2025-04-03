@@ -3,6 +3,7 @@ import os
 from keep_alive import keep_alive
 from discord import app_commands
 import weather
+import BombGame
 import re
 import asyncio
 import random
@@ -70,6 +71,10 @@ async def random_number(interaction: discord.Interaction, min_value: int, max_va
         return
     result = random.randint(min_value, max_value)
     await interaction.response.send_message(f"⚡ ランダムな数値: **{result}**（{min_value} 〜 {max_value}）")
+@tree.command(name="bombgame", description="爆弾解除ゲームを開始する！")
+async def bomb_game(interaction: discord.Interaction):
+    view = BombGame.BombGame()
+    await interaction.response.send_message("💣 **爆弾がセットされた！正しいボタンを押して解除しよう！**", view=view)
     
 @client.event
 async def on_message(message):
