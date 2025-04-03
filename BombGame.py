@@ -51,4 +51,4 @@ class BombSetup(discord.ui.View):
             await interaction.response.send_message("この爆弾はあなたが仕掛けるものではありません！", ephemeral=True)
             return
         bomb_location[interaction.channel.id] = choice
-        await interaction.response.edit_message(content=f"💣 **爆弾が {choice} にセットされた！**\n他の人は解除を試みよう！", view=None)
+        await interaction.response.edit_message(content=f"💣 **爆弾がセットされた！**\n他の人は解除を試みよう！", view=None)
