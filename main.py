@@ -87,14 +87,6 @@ async def bomb_game(interaction: discord.Interaction, mode: str):
         # プレイヤーが爆弾をセット
         await interaction.response.send_message("💣 **どこに爆弾を仕掛けますか？**", view=BombGame.BombSetup(interaction.user.id))
 
-@tree.command(name="defuse", description="仕掛けられた爆弾を解除する")
-async def defuse_bomb(interaction: discord.Interaction):
-    if interaction.channel.id in BombGame.bomb_location:
-        correct_button = BombGame.bomb_location.pop(interaction.channel.id)
-        await interaction.response.send_message("💣 **爆弾がセットされた！正しいボタンを押して解除しよう！**", view=BombGame.BombGame(correct_button))
-    else:
-        await interaction.response.send_message("このチャンネルには爆弾が仕掛けられていません！", ephemeral=True)
-
     
 @client.event
 async def on_message(message):
