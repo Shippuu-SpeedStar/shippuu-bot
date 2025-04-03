@@ -55,6 +55,6 @@ class BombSetup(discord.ui.View):
 
         # メッセージを爆弾セット完了に編集 & 解除UIを追加
         await interaction.response.edit_message(
-            content=f"💣 **爆弾が {choice} にセットされた！**\n他の人は解除を試みよう！",
+            content=f"💣 **爆弾がセットされた！**\n他の人は解除を試みよう！",
             view=BombGame(choice)  # ここで解除ボタンを表示
         )
