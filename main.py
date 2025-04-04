@@ -120,8 +120,9 @@ async def on_message(message):
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
     elif message.content == "!ShippuuVc":
-            if message.guild.voice_client is not None:
-                message.guild.voice_client.disconnect()
+        channel = client.get_channel(int(VC_ID))
+        if message.guild.voice_client is not None:
+            message.guild.voice_client.disconnect()
             try:
                 vc = await channel.connect()
             except Exception as e:
