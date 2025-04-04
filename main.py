@@ -121,18 +121,16 @@ async def on_message(message):
         await message.channel.send(weather_message)
     elif message.content == "!join":
         channel = message.author.voice.channel
-        if message.guild.voice_client is not None:
-            message.guild.voice_client.disconnect()
-            try:
-                vc = await channel.connect()
-            except Exception as e:
-                await message.channel.send(str(e))
-                return
+        try:
+            vc = await channel.connect()
+        except Exception as e:
+            await message.channel.send(str(e))
+            return
     elif message.content == '!leave':
-            if message.guild.voice_client is not None:
-                message.guild.voice_client.stop()
-                await message.guild.voice_client.disconnect()
+        message.guild.voice_client.stop()
+        await message.guild.voice_client.disconnect()
 
+                
 TOKEN = os.getenv("DISCORD_TOKEN")
 # Web サーバの立ち上げ
 keep_alive()
