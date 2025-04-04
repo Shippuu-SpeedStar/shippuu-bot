@@ -1,5 +1,6 @@
 import discord
 import random
+from datetime import timedelta
 
 # 爆弾の場所を記録する辞書
 bomb_location = {}
@@ -26,6 +27,7 @@ class BombGame(discord.ui.View):
         if choice == self.correct_button:
             await interaction.response.edit_message(content=f"💣 **{interaction.user.name} が爆弾を解除した！🎉**", view=None)
         else:
+            await user.timeout(timedelta(seconds=5), reason="爆弾解除に失敗して爆発したため")
             await interaction.response.edit_message(content=f"💥 **{interaction.user.name} のミス！爆発した…💀**", view=None)
 
 class BombSetup(discord.ui.View):
