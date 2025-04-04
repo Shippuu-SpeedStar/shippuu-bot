@@ -127,7 +127,7 @@ async def on_message(message):
             except Exception as e:
                 await message.channel.send(str(e))
                 return
-        if message.content == '!ShippuuVcStop':
+    elif message.content == '!ShippuuVcStop':
             if message.guild.voice_client is not None:
                 message.guild.voice_client.stop()
                 await message.guild.voice_client.disconnect()
