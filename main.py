@@ -120,15 +120,23 @@ async def on_message(message):
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
     elif message.content == "!join":
-        channel = message.author.voice.channel
-        try:
-            vc = await channel.connect()
-        except Exception as e:
-            await message.channel.send(str(e))
-            return
+        if message.author.voice:  # ユーザーがVCにいるか確認
+            channel = message.author.voice.channel
+            try:
+                await channel.connect()
+            except discord.errors.ClientException:
+                await message.channel.send("すでにVCに接続しています！")
+            except Exception as e:
+                await message.channel.send(f"エラーが発生しました: {e}")
+        else:
+            await message.channel.send("VCに参加してからコマンドを使用してください！")
+
     elif message.content == "!leave":
-        message.guild.voice_client.stop()
-        await message.guild.voice_client.disconnect()
+        vc = message.guild.voice_client  # サーバーのVCクライアントを取得
+        if vc:  # VCに接続している場合のみ処理
+            await vc.disconnect()
+        else:
+            await message.channel.send("ボットはVCに参加していません！")
 
                 
 TOKEN = os.getenv("DISCORD_TOKEN")
