@@ -11,7 +11,6 @@ from datetime import datetime, timezone, timedelta
 
 intents=discord.Intents.all()
 intents.message_content = True
-intents.voice_states = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
@@ -120,25 +119,6 @@ async def on_message(message):
     elif reg_res:
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
-    elif message.content == "!join":
-        if message.author.voice:  # ユーザーがVCにいるか確認
-            channel = message.author.voice.channel
-            try:
-                await channel.connect()
-            except discord.errors.ClientException:
-                await message.channel.send("すでにVCに接続しています！")
-            except Exception as e:
-                await message.channel.send(f"エラーが発生しました: {e}")
-        else:
-            await message.channel.send("VCに参加してからコマンドを使用してください！")
-
-    elif message.content == "!leave":
-        vc = discord.utils.get(client.voice_clients, guild=message.guild)  # VCクライアントを正しく取得
-        if vc and vc.is_connected():  # ボットがVCに接続しているか確認
-            await vc.disconnect()
-            await message.channel.send("👋 VCから退出しました！")
-        else:
-            await message.channel.send("⚠ ボットはVCに参加していません！")
 
                 
 TOKEN = os.getenv("DISCORD_TOKEN")
