@@ -24,7 +24,7 @@ last_omikuji = {}
 
 PROBOT_ID = 282859044593598464  # ProbotのユーザーID
 ROLE_ID = 1301466875762442250  # 付与したいロールのID
-@bot.event
+@client.event
 async def on_member_join(member):
     """ 新しいメンバーが参加した時に発動 """
     guild = member.guild
