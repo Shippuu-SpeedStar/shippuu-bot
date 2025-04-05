@@ -34,7 +34,7 @@ async def on_member_join(member):
         # Probotがオフラインならロールを付与
         role = guild.get_role(ROLE_ID)
         if role:
-            await member.add_roles(role)
+            #await member.add_roles(role)
             msg = (
                 f"{member.mention}さんが参加しました！🎉 82人目の参加者です！✨\n"
                 "-# メンションNGの方も最初だけメンションすみません。\n"
