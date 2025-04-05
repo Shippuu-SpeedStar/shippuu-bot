@@ -35,6 +35,6 @@ topics = [
     "今日を10点満点で評価すると？📊"
 ]
 
-def on_message(reg_res):
+def on_message():
   topic = random.choice(topics)
   return f"💬 今日の話題はこちら！\n>>> {topic}"
