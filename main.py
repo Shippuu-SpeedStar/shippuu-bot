@@ -12,6 +12,7 @@ from datetime import datetime, timezone, timedelta
 
 intents=discord.Intents.all()
 intents.message_content = True
+intents.members = True  # メンバー参加イベントを取得するために必要
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
@@ -20,6 +21,27 @@ JST = timezone(timedelta(hours=9))
 
 # おみくじの履歴を保存する辞書
 last_omikuji = {}
+
+PROBOT_ID = 282859044593598464  # ProbotのユーザーID
+ROLE_ID = 1301466875762442250  # 付与したいロールのID
+@bot.event
+async def on_member_join(member):
+    """ 新しいメンバーが参加した時に発動 """
+    guild = member.guild
+    probot = guild.get_member(PROBOT_ID)  # Probotのステータスを取得
+
+    if probot is None or probot.status == discord.Status.offline:
+        # Probotがオフラインならロールを付与
+        role = guild.get_role(ROLE_ID)
+        if role:
+            await member.add_roles(role)
+            msg = f"{member.mention}さんが参加しました！🎉 82人目の参加者です！✨/n
+            -# メンションNGの方も最初だけメンションすみません。/n
+            <#1236670753165021204>で自己紹介お願いします🖊️/n
+            <#1254457265046421556>で超古参勢ロール配布中です！(100人まで)"
+            await client.get_channel(1235503983179730946).send(msg)
+        else:
+            print("指定されたロールが見つかりません。")
 
 @client.event
 async def on_ready():
