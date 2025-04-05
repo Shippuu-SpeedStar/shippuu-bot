@@ -4,6 +4,7 @@ from keep_alive import keep_alive
 from discord import app_commands
 import weather
 import BombGame
+import topic
 import re
 import asyncio
 import random
@@ -116,6 +117,9 @@ async def on_message(message):
         await message.channel.send("どういたしまして！👍")
     elif message.channel.id == 1347057189868539905 and message.author.bot:
         await message.delete()
+    elif message.content == "疾風、今日の話題は？":
+        today_topic = topic.on_message()
+        await message.channel.send(today_topic)
     elif reg_res:
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
