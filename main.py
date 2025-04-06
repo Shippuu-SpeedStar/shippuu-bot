@@ -35,8 +35,11 @@ async def on_member_join(member):
         role = guild.get_role(ROLE_ID)
         if role:
             #await member.add_roles(role)
+            guild = member.guild 
+            # ユーザとBOTを区別しない場合
+            member_count = guild.member_count
             msg = (
-                f"{member.mention}さんが参加しました！🎉 82人目の参加者です！✨\n"
+                f"{member.mention}さんが参加しました！🎉 {member_count}人目の参加者です！✨\n"
                 "-# メンションNGの方も最初だけメンションすみません。\n"
                 "<#1236670753165021204>で自己紹介お願いします🖊️\n"
                 "<#1254457265046421556>で超古参勢ロール配布中です！(100人まで)"
