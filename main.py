@@ -165,7 +165,7 @@ async def on_message(message):
                 await message.channel.send("❌ チャンネルが見つかりません。Botがそのチャンネルにアクセスできるか確認してください。")
                 return
 
-            await channel.send(content)
+            #await channel.send(content)
             await message.channel.send(f"✅ 指定したチャンネル <#{channel_id}> に送信しました。")
         except Exception as e:
             await message.channel.send(f"⚠️ エラーが発生しました: {e}")
