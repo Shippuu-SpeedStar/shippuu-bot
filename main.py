@@ -160,7 +160,7 @@ async def on_message(message):
             channel_id = int(channel_id_str.strip())
             content = content.strip()
 
-            channel = bot.get_channel(channel_id)
+            channel = client.get_channel(channel_id)
             if channel is None:
                 await message.channel.send("❌ チャンネルが見つかりません。Botがそのチャンネルにアクセスできるか確認してください。")
                 return
