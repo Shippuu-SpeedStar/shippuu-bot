@@ -150,6 +150,25 @@ async def on_message(message):
     elif reg_res:
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
+    # コマンド形式：疾風、チャンネル送信[チャンネルID],[メッセージ内容]
+    elif message.content.startswith("疾風、チャンネル送信[") and "]," in message.content:
+        try:
+            # 部分を抽出
+            command_body = message.content[len("疾風、チャンネル送信["):]
+            channel_id_str, content = command_body.split("],", 1)
+
+            channel_id = int(channel_id_str.strip())
+            content = content.strip()
+
+            channel = bot.get_channel(channel_id)
+            if channel is None:
+                await message.channel.send("❌ チャンネルが見つかりません。Botがそのチャンネルにアクセスできるか確認してください。")
+                return
+
+            await channel.send(content)
+            await message.channel.send(f"✅ 指定したチャンネル <#{channel_id}> に送信しました。")
+        except Exception as e:
+            await message.channel.send(f"⚠️ エラーが発生しました: {e}")
 
                 
 TOKEN = os.getenv("DISCORD_TOKEN")
