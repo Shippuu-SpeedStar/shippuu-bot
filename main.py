@@ -155,27 +155,15 @@ async def on_message(message):
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
     # コマンド形式：疾風、チャンネル送信[チャンネルID],[メッセージ内容]
-    elif message.content.startswith("チャンネル送信[") and "]," in message.content:
-        # ✅ 権限確認（ロールID）
+    if message.content.startswith("疾風、チャンネル送信[") and "]," in message.content:
         user_id = message.author.id
         # ✅ 使用許可ユーザーの確認
         if user_id not in ALLOWED_USERS:
             await message.channel.send("❌ このコマンドを使う権限がありません。")
             return
-
-        # ✅ クールダウン確認
-        now = time.time()
-        user_id = message.author.id
-        last_used = cooldowns.get(user_id, 0)
-        if now - last_used < COOLDOWN_SECONDS:
-            remaining = int(COOLDOWN_SECONDS - (now - last_used))
-            minutes = remaining // 60
-            seconds = remaining % 60
-            await message.channel.send(f"⏳ このコマンドはあと {minutes}分{seconds}秒 待つ必要があります。")
-            return
-
         try:
-            command_body = message.content[len("チャンネル送信["):]
+            # 部分を抽出
+            command_body = message.content[len("疾風、チャンネル送信["):]
             channel_id_str, content = command_body.split("],", 1)
 
             channel_id = int(channel_id_str.strip())
@@ -183,15 +171,11 @@ async def on_message(message):
 
             channel = client.get_channel(channel_id)
             if channel is None:
-                await message.channel.send("❌ チャンネルが見つかりません。")
+                await message.channel.send("❌ チャンネルが見つかりません。Botがそのチャンネルにアクセスできるか確認してください。")
                 return
 
             await channel.send(content)
-            await message.channel.send(f"✅ 指定チャンネル <#{channel_id}> に送信しました。")
-
-            # ✅ クールダウン記録
-            cooldowns[user_id] = now
-
+            await message.channel.send(f"✅ 指定したチャンネル <#{channel_id}> に送信しました。")
         except Exception as e:
             await message.channel.send(f"⚠️ エラーが発生しました: {e}")
 
