@@ -22,7 +22,7 @@ JST = timezone(timedelta(hours=9))
 # おみくじの履歴を保存する辞書
 last_omikuji = {}
 # 遠隔当行の履歴を保存する辞書
-ALLOWED_ROLE_ID = 1237426458910134452  # ✅ 実際のロールIDに置き換えてください
+ALLOWED_USERS = {1228003399933497366, 1255885908784451739}  # ✅ 使えるユーザーのIDをここに追加
 cooldowns = {}  # user_id: last_used_timestamp
 COOLDOWN_SECONDS = 600  # 10分（600秒）
 
@@ -157,8 +157,9 @@ async def on_message(message):
     # コマンド形式：疾風、チャンネル送信[チャンネルID],[メッセージ内容]
     elif message.content.startswith("チャンネル送信[") and "]," in message.content:
         # ✅ 権限確認（ロールID）
-        has_permission = any(role.id == ALLOWED_ROLE_ID for role in message.author.roles)
-        if not has_permission:
+        user_id = message.author.id
+        # ✅ 使用許可ユーザーの確認
+        if user_id not in ALLOWED_USERS:
             return
 
         # ✅ クールダウン確認
