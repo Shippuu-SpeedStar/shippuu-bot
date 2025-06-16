@@ -161,6 +161,14 @@ async def on_message(message):
         if user_id not in ALLOWED_USERS:
             await message.channel.send("❌ このコマンドを使う権限がありません。")
             return
+        # ✅ クールダウン確認
+        now = time.time()
+        last_used = cooldowns.get(user_id, 0)
+        if now - last_used < COOLDOWN_SECONDS:
+            remaining = int(COOLDOWN_SECONDS - (now - last_used))
+            await message.channel.send(f"⏳ あと {remaining // 60}分{remaining % 60}秒 待ってください。")
+            return
+        # ✅ メッセージ処理
         try:
             # 部分を抽出
             command_body = message.content[len("疾風、チャンネル送信["):]
