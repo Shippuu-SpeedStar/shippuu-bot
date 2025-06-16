@@ -21,6 +21,10 @@ JST = timezone(timedelta(hours=9))
 
 # おみくじの履歴を保存する辞書
 last_omikuji = {}
+# 遠隔当行の履歴を保存する辞書
+ALLOWED_ROLE_ID = 1237426458910134452  # ✅ 実際のロールIDに置き換えてください
+cooldowns = {}  # user_id: last_used_timestamp
+COOLDOWN_SECONDS = 600  # 10分（600秒）
 
 PROBOT_ID = 282859044593598464  # ProbotのユーザーID
 ROLE_ID = 1301466875762442250  # 付与したいロールのID
@@ -151,10 +155,25 @@ async def on_message(message):
         weather_message = weather.on_message(reg_res)
         await message.channel.send(weather_message)
     # コマンド形式：疾風、チャンネル送信[チャンネルID],[メッセージ内容]
-    elif message.content.startswith("疾風、チャンネル送信[") and "]," in message.content:
+    elif message.content.startswith("チャンネル送信[") and "]," in message.content:
+        # ✅ 権限確認（ロールID）
+        has_permission = any(role.id == ALLOWED_ROLE_ID for role in message.author.roles)
+        if not has_permission:
+            return
+
+        # ✅ クールダウン確認
+        now = time.time()
+        user_id = message.author.id
+        last_used = cooldowns.get(user_id, 0)
+        if now - last_used < COOLDOWN_SECONDS:
+            remaining = int(COOLDOWN_SECONDS - (now - last_used))
+            minutes = remaining // 60
+            seconds = remaining % 60
+            await message.channel.send(f"⏳ このコマンドはあと {minutes}分{seconds}秒 待つ必要があります。")
+            return
+
         try:
-            # 部分を抽出
-            command_body = message.content[len("疾風、チャンネル送信["):]
+            command_body = message.content[len("チャンネル送信["):]
             channel_id_str, content = command_body.split("],", 1)
 
             channel_id = int(channel_id_str.strip())
@@ -162,11 +181,15 @@ async def on_message(message):
 
             channel = client.get_channel(channel_id)
             if channel is None:
-                await message.channel.send("❌ チャンネルが見つかりません。Botがそのチャンネルにアクセスできるか確認してください。")
+                await message.channel.send("❌ チャンネルが見つかりません。")
                 return
 
-            #await channel.send(content)
-            await message.channel.send(f"✅ 指定したチャンネル <#{channel_id}> に送信しました。")
+            await channel.send(content)
+            await message.channel.send(f"✅ 指定チャンネル <#{channel_id}> に送信しました。")
+
+            # ✅ クールダウン記録
+            cooldowns[user_id] = now
+
         except Exception as e:
             await message.channel.send(f"⚠️ エラーが発生しました: {e}")
 
