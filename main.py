@@ -160,6 +160,7 @@ async def on_message(message):
         user_id = message.author.id
         # ✅ 使用許可ユーザーの確認
         if user_id not in ALLOWED_USERS:
+            await message.channel.send("❌ このコマンドを使う権限がありません。")
             return
 
         # ✅ クールダウン確認
