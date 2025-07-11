@@ -128,6 +128,7 @@ async def on_message(message):
         return
     if message.channel.id == 1236670753165021204:#自己紹介チャンネルに自動で絵文字
         try:
+            emoji ="👍"
             await message.add_reaction(emoji)
         except discord.HTTPException as e:
             await message.channel.send("ボットエラー")
