@@ -26,7 +26,7 @@ last_omikuji = {}
 ALLOWED_USERS = {1228003399933497366, 1255885908784451739}  # ✅ 使えるユーザーのIDをここに追加
 cooldowns = {}  # user_id: last_used_timestamp
 COOLDOWN_SECONDS = 600  # 10分（600秒）
-
+ALLOWED_GUILD_IDS = {1235503983179730944,1268381411904323655,1268199427865055345}  # ✅ Botが所属できるサーバーIDをここに記入（複数対応可）
 PROBOT_ID = 282859044593598464  # ProbotのユーザーID
 ROLE_ID = 1301466875762442250  # 付与したいロールのID
 @client.event
@@ -52,6 +52,16 @@ async def on_member_join(member):
             await client.get_channel(1235503983179730946).send(msg)
         else:
             print("指定されたロールが見つかりません。")
+@bot.event
+async def on_guild_join(guild):
+    if guild.id not in ALLOWED_GUILD_IDS:
+        print(f"❌ 許可されていないサーバー ({guild.name}) に参加したため退出します。")
+        try:
+            await guild.leave()
+        except Exception as e:
+            print(f"⚠️ サーバーから退出できませんでした: {e}")
+    else:
+        print(f"✅ 許可されたサーバー ({guild.name}) に参加しました。")
 
 @client.event
 async def on_ready():
