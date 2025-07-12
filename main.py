@@ -52,7 +52,7 @@ async def on_member_join(member):
             await client.get_channel(1235503983179730946).send(msg)
         else:
             print("指定されたロールが見つかりません。")
-@bot.event
+@client.event
 async def on_guild_join(guild):
     if guild.id not in ALLOWED_GUILD_IDS:
         print(f"❌ 許可されていないサーバー ({guild.name}) に参加したため退出します。")
