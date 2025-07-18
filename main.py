@@ -11,6 +11,7 @@ import asyncio
 import random
 from datetime import datetime, timezone, timedelta
 import time
+import requests
 
 intents=discord.Intents.all()
 intents.message_content = True
@@ -33,6 +34,8 @@ ROLE_ID = 1301466875762442250  # 付与したいロールのID
 #money
 money_data = {}
 last_work_used = {}
+GITHUB_REPO = "Shippuu-SpeedStar/shippuu-bot"  # GitHubリポジトリのパス
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # 安全な方法で読み込む（本番環境ではSecrets管理推奨）
 @client.event
 async def on_member_join(member):
     """ 新しいメンバーが参加した時に発動 """
@@ -94,6 +97,19 @@ async def save_money_data():
     with open("server_money.json", "w", encoding="utf-8") as f:
         json.dump(money_data, f, ensure_ascii=False, indent=4)
     print("通貨データを保存しました")
+    # GitHub Actionsトリガー
+    trigger_github_workflow()
+def trigger_github_workflow():
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/push-json.yml/dispatches"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {GITHUB_TOKEN}"
+    }
+    data = {
+        "ref": "main"
+    }
+    response = requests.post(url, headers=headers, json=data)
+
 #スラッシュコマンド
 @tree.command(name='membercount', description='サーバーの人数を表示します') 
 async def member_count(message):
