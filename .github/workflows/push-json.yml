@@ -18,12 +18,12 @@ jobs:
       - name: Copy new JSON
         run: |
           echo "Replacing server_money.json"
-          cp server_money.json server_money.json  # ローカルにあるJSONファイルと差し替える
+          cp ./bot/server_money.json ./server_money.json  # botディレクトリからルートにコピー
 
       - name: Commit and push
         env:
           TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
         run: |
           git add server_money.json
-          git commit -m "Update money data [auto]"
+          git commit -m "Update money data [auto]" || echo "No changes to commit"
           git push https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
