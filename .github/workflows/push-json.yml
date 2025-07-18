@@ -7,8 +7,10 @@ jobs:
   push_json:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout repository (without default credentials)
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false  # これを絶対に追加！
 
       - name: Set up Git user
         run: |
@@ -20,10 +22,11 @@ jobs:
           echo "Replacing server_money.json"
           cp ./bot/server_money.json ./server_money.json
 
-      - name: Commit and push
+      - name: Commit and push with PAT
         env:
           TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
         run: |
+          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
           git add server_money.json
           git commit -m "Update money data [auto]" || echo "No changes to commit"
-          git push https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
+          git push origin main
