@@ -1,0 +1,29 @@
+name: Push server_money.json
+
+on:
+  workflow_dispatch:
+
+jobs:
+  push_json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Copy new JSON
+        run: |
+          echo "Replacing server_money.json"
+          cp server_money.json server_money.json  # ローカルにあるJSONファイルと差し替える
+
+      - name: Commit and push
+        env:
+          TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
+        run: |
+          git add server_money.json
+          git commit -m "Update money data [auto]"
+          git push https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
