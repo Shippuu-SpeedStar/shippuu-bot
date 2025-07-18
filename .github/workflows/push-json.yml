@@ -22,7 +22,7 @@ jobs:
 
       - name: Commit and push
         env:
-          TOKEN: ${{ secrets.shippuu-bot }}
+          TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
         run: |
           git add server_money.json
           git commit -m "Update money data [auto]" || echo "No changes to commit"
