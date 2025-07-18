@@ -12,6 +12,7 @@ import random
 from datetime import datetime, timezone, timedelta
 import time
 import requests
+import json
 
 intents=discord.Intents.all()
 intents.message_content = True
@@ -91,7 +92,7 @@ async def member_count(message):
     earned = random.randint(100, 500)
     money_data[user_id] = money_data.get(user_id, 0) + earned
     last_work_used[user_id] = now
-    await message.response.send_message(f"{message.user.mention} さんは {earned} コインを稼ぎました！💰")
+    await message.response.send_message(f"{message.user.mention} さんは {earned} コインを稼ぎました！💰現在{money_data[user_id]}所持")
 @tasks.loop(hours=6)
 async def save_money_data():
     with open("server_money.json", "w", encoding="utf-8") as f:
