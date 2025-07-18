@@ -77,7 +77,7 @@ async def on_ready():
     await tree.sync()
     save_money_data.start()#通貨機能開始
 # 通貨機能
-@tree.command(name='membercount', description='通貨を獲得します') 
+@tree.command(name='work', description='通貨を獲得します') 
 async def member_count(message):
     user_id = str(message.author.id)
     now = datetime.utcnow()
