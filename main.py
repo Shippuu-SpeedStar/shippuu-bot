@@ -93,6 +93,14 @@ async def member_count(message):
     money_data[user_id] = money_data.get(user_id, 0) + earned
     last_work_used[user_id] = now
     await message.response.send_message(f"{message.user.mention} さんは {earned} コインを稼ぎました！💰現在{money_data[user_id]}所持")
+@tree.command(name='money_dump', description='通貨をバックアップします') 
+async def member_count(message):
+    await message.response.send_message(f"手動バックアップ")
+    with open("server_money.json", "w", encoding="utf-8") as f:
+        json.dump(money_data, f, ensure_ascii=False, indent=4)
+    print("通貨データを保存しました")
+    # GitHub Actionsトリガー
+    trigger_github_workflow()
 @tasks.loop(hours=6)
 async def save_money_data():
     with open("server_money.json", "w", encoding="utf-8") as f:
