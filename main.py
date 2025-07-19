@@ -108,24 +108,31 @@ async def member_count(message):
         json.dump(money_data, f, ensure_ascii=False, indent=4)
     print("通貨データを保存しました")
     # GitHub Actionsトリガー
-    trigger_github_workflow()
+    trigger_github_workflow(money_data)
 @tasks.loop(hours=6)
 async def save_money_data():
     with open("server_money.json", "w", encoding="utf-8") as f:
         json.dump(money_data, f, ensure_ascii=False, indent=4)
     print("通貨データを保存しました")
     # GitHub Actionsトリガー
-    trigger_github_workflow()
-def trigger_github_workflow():
-    url = f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/push-json.yml/dispatches"
+    trigger_github_workflow(money_data)
+def trigger_github_workflow(money_data):
     headers = {
         "Accept": "application/vnd.github+json",
-        "Authorization": f"Bearer {GITHUB_TOKEN}"
+        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        "X-GitHub-Api-Version": "2022-11-28"
     }
     data = {
-        "ref": "main"
+        "ref": "main",
+        "inputs": {
+            "json_data": json.dumps(money_data)
+        }
     }
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(
+        f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/actions/workflows/save_money.yml/dispatches",
+        headers=headers,
+        json=data
+    )
 
 #スラッシュコマンド
 @tree.command(name='membercount', description='サーバーの人数を表示します') 
