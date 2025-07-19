@@ -4,15 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       json_data:
-        description: 'JSONデータ文字列'
+        description: 'JSON string from bot'
         required: true
-        type: string
 
 jobs:
   push_json:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository (without default credentials)
+      - name: Checkout repository (no credentials)
         uses: actions/checkout@v3
         with:
           persist-credentials: false
@@ -24,14 +23,14 @@ jobs:
 
       - name: Save input JSON to file
         run: |
-          echo '${{ github.event.inputs.json_data }}' > server_money.json
+          echo "${{ github.event.inputs.json_data }}" > server_money.json
 
       - name: Commit and push with PAT
         env:
           TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
         run: |
           git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
-          git pull --rebase origin main   # ✅ 追加！
+          git pull --rebase origin main  # ✅ これを最初に
           git add server_money.json
           git commit -m "Update money data [auto]" || echo "No changes to commit"
           git push origin main
