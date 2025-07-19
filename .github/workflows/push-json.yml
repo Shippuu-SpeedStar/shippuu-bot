@@ -42,4 +42,5 @@ jobs:
 
           git add server_money.json
           git commit -m "Update money data [auto]" || echo "No changes to commit"
+          git pull origin main --rebase
           git push origin main
