@@ -80,6 +80,14 @@ async def on_ready():
     # スラッシュコマンドを同期
     await tree.sync()
     save_money_data.start()#通貨機能開始
+    # money_data 読み込み（Bot起動時）
+    try:
+        with open("server_money.json", "r", encoding="utf-8") as f:
+            money_data = json.load(f)
+            print("💾 通貨データを読み込みました")
+    except FileNotFoundError:
+        money_data = {}
+        print("⚠️ 通貨データが見つかりませんでした。新規作成します")
 # 通貨機能
 @tree.command(name='work', description='通貨を獲得します') 
 async def member_count(message):
