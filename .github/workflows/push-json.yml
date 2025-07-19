@@ -2,31 +2,22 @@ name: Push server_money.json
 
 on:
   workflow_dispatch:
+    inputs:
+      json_data:
+        description: 'Money JSON data'
+        required: true
 
 jobs:
-  push_json:
+  save_data:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository (without default credentials)
-        uses: actions/checkout@v3
-        with:
-          persist-credentials: false  # これを絶対に追加！
+      - uses: actions/checkout@v3
 
-      - name: Set up Git user
+      - name: Save JSON to file
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Copy new JSON
-        run: |
-          echo "Replacing server_money.json"
-          cp ./bot/server_money.json ./server_money.json
-
-      - name: Commit and push with PAT
-        env:
-          TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
-        run: |
-          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
+          echo '${{ github.event.inputs.json_data }}' > server_money.json
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git add server_money.json
-          git commit -m "Update money data [auto]" || echo "No changes to commit"
-          git push origin main
+          git commit -m "Auto update server_money.json"
+          git push
