@@ -80,7 +80,7 @@ async def on_ready():
     await client.change_presence(status=discord.Status.online, activity=activity)
     # スラッシュコマンドを同期
     await tree.sync()
-    #save_money_data.start()#通貨機能開始
+    save_money_data.start()#通貨機能開始
     
 # 起動時にJSONファイルを読み込む
 def load_money_data():
@@ -106,6 +106,23 @@ async def member_count(message):
     last_work_used[user_id] = now
     await message.response.send_message(f"{message.user.mention} さんは {earned} コインを稼ぎました！💰現在{money_data[user_id]}所持")
     trigger_github_workflow(money_data)
+@tree.command(name='money_dump', description='通貨をバックアップします') 
+async def member_count(message):
+    await message.response.send_message(f"手動バックアップ{money_data}")
+    with open("server_money.json", "w", encoding="utf-8") as f:
+        json.dump(money_data, f, ensure_ascii=False, indent=4)
+    print("通貨データを保存しました")
+    # GitHub Actionsトリガー
+    trigger_github_workflow(money_data)
+
+@tasks.loop(hours=6)
+async def save_money_data():
+    with open("server_money.json", "w", encoding="utf-8") as f:
+        json.dump(money_data, f, ensure_ascii=False, indent=4)
+    print("通貨データを保存しました")
+    # GitHub Actionsトリガー
+    trigger_github_workflow(money_data)
+
 def trigger_github_workflow(money_data):
     headers = {
         "Accept": "application/vnd.github+json",
