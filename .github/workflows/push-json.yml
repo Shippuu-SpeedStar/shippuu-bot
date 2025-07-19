@@ -31,6 +31,7 @@ jobs:
           TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
         run: |
           git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
+          git pull --rebase origin main   # ✅ 追加！
           git add server_money.json
           git commit -m "Update money data [auto]" || echo "No changes to commit"
           git push origin main
