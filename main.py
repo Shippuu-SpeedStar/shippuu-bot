@@ -129,7 +129,7 @@ def trigger_github_workflow(money_data):
         }
     }
     response = requests.post(
-        f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/actions/workflows/save_money.yml/dispatches",
+        f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/push-json.yml/dispatches",
         headers=headers,
         json=data
     )
