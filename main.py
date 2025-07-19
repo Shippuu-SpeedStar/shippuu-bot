@@ -73,6 +73,7 @@ async def on_guild_join(guild):
 
 @client.event
 async def on_ready():
+    load_money_data()
     print('ログインしました')
  # アクティビティを設定
     activity = discord.Activity(name='疾風スピードスター', type=discord.ActivityType.competing)
@@ -80,8 +81,6 @@ async def on_ready():
     # スラッシュコマンドを同期
     await tree.sync()
     save_money_data.start()#通貨機能開始
-    # 起動時に呼び出す
-    load_money_data()
     
 # 起動時にJSONファイルを読み込む
 def load_money_data():
