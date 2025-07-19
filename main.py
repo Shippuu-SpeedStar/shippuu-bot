@@ -103,7 +103,7 @@ async def member_count(message):
     await message.response.send_message(f"{message.user.mention} さんは {earned} コインを稼ぎました！💰現在{money_data[user_id]}所持")
 @tree.command(name='money_dump', description='通貨をバックアップします') 
 async def member_count(message):
-    await message.response.send_message(f"手動バックアップ")
+    await message.response.send_message(f"手動バックアップ{money_data}")
     with open("server_money.json", "w", encoding="utf-8") as f:
         json.dump(money_data, f, ensure_ascii=False, indent=4)
     print("通貨データを保存しました")
