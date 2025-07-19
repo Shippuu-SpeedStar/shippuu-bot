@@ -2,6 +2,11 @@ name: Push server_money.json
 
 on:
   workflow_dispatch:
+    inputs:
+      json_data:
+        description: 'JSONデータ文字列'
+        required: true
+        type: string
 
 jobs:
   push_json:
@@ -10,17 +15,16 @@ jobs:
       - name: Checkout repository (without default credentials)
         uses: actions/checkout@v3
         with:
-          persist-credentials: false  # これを絶対に追加！
+          persist-credentials: false
 
       - name: Set up Git user
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Copy new JSON
+      - name: Save input JSON to file
         run: |
-          echo "Replacing server_money.json"
-          cp ./bot/server_money.json ./server_money.json
+          echo '${{ github.event.inputs.json_data }}' > server_money.json
 
       - name: Commit and push with PAT
         env:
