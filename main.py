@@ -73,74 +73,13 @@ async def on_guild_join(guild):
 
 @client.event
 async def on_ready():
-    load_money_data()
     print('ログインしました')
  # アクティビティを設定
     activity = discord.Activity(name='疾風スピードスター', type=discord.ActivityType.competing)
     await client.change_presence(status=discord.Status.online, activity=activity)
     # スラッシュコマンドを同期
     await tree.sync()
-    save_money_data.start()#通貨機能開始
     
-# 起動時にJSONファイルを読み込む
-def load_money_data():
-    global money_data
-    if os.path.exists("server_money.json"):
-        with open("server_money.json", "r", encoding="utf-8") as f:
-            money_data = json.load(f)
-        print("money_data を読み込みました")
-    else:
-        print("server_money.json が見つかりません")
-# 通貨機能
-@tree.command(name='work', description='通貨を獲得します') 
-async def member_count(message):
-    load_money_data()
-    user_id = str(message.user.id)
-    now = datetime.utcnow()
-    # クールダウン制限（例：30秒）
-    if user_id in last_work_used and now - last_work_used[user_id] < timedelta(seconds=30):
-        await message.response.send_message("少し待ってから実行してください", ephemeral=True)
-        return
-    earned = random.randint(100, 500)
-    money_data[user_id] = money_data.get(user_id, 0) + earned
-    last_work_used[user_id] = now
-    await message.response.send_message(f"{message.user.mention} さんは {earned} コインを稼ぎました！💰現在{money_data[user_id]}所持")
-    trigger_github_workflow(money_data)
-@tree.command(name='money_dump', description='通貨をバックアップします') 
-async def member_count(message):
-    await message.response.send_message(f"手動バックアップ{money_data}")
-    with open("server_money.json", "w", encoding="utf-8") as f:
-        json.dump(money_data, f, ensure_ascii=False, indent=4)
-    print("通貨データを保存しました")
-    # GitHub Actionsトリガー
-    trigger_github_workflow(money_data)
-
-@tasks.loop(hours=6)
-async def save_money_data():
-    with open("server_money.json", "w", encoding="utf-8") as f:
-        json.dump(money_data, f, ensure_ascii=False, indent=4)
-    print("通貨データを保存しました")
-    # GitHub Actionsトリガー
-    trigger_github_workflow(money_data)
-
-def trigger_github_workflow(money_data):
-    headers = {
-        "Accept": "application/vnd.github+json",
-        "Authorization": f"Bearer {GITHUB_TOKEN}",
-        "X-GitHub-Api-Version": "2022-11-28"
-    }
-    data = {
-        "ref": "main",
-        "inputs": {
-            "json_data": json.dumps(money_data)
-        }
-    }
-    response = requests.post(
-        f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/push-json.yml/dispatches",
-        headers=headers,
-        json=data
-    )
-
 #スラッシュコマンド
 @tree.command(name='membercount', description='サーバーの人数を表示します') 
 async def member_count(message):
