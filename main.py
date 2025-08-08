@@ -140,8 +140,8 @@ async def bomb_game(interaction: discord.Interaction, mode: str):
         await interaction.response.send_message("💣 **どこに爆弾を仕掛けますか？**", view=BombGame.BombSetup(interaction.user.id))
 #emoji
 @tree.command(name="emoji", description="指定したメッセージに絵文字リアクションをつけます")
-@app_commands.describe(emoji_name="つけたい絵文字（例: :smile:）", message_link="Discordメッセージのリンク")
-async def emoji_command(interaction: discord.Interaction, emoji_name: str, message_link: str):
+@app_commands.describe(emoji="つけたい絵文字", message_link="Discordメッセージのリンク")
+async def emoji_command(interaction: discord.Interaction, emoji: str, message_link: str):
     try:
         # メッセージリンクを分解
         parsed = urlparse(message_link)
@@ -156,20 +156,6 @@ async def emoji_command(interaction: discord.Interaction, emoji_name: str, messa
         channel = await bot.fetch_channel(channel_id)
         message = await channel.fetch_message(message_id)
 
-        # emoji_name がカスタム絵文字（<:name:id>形式）の場合はそのまま
-        emoji = None
-        if emoji_name.startswith("<") and emoji_name.endswith(">"):
-            emoji = emoji_name
-        else:
-            # サーバー内のカスタム絵文字検索（:name: の形式を想定）
-            clean_name = emoji_name.strip(":")
-            custom_emoji = discord.utils.get(interaction.guild.emojis, name=clean_name)
-            if custom_emoji:
-                emoji = custom_emoji
-            else:
-                # カスタムが見つからなければ標準絵文字として使う
-                emoji = clean_name
-
         # リアクション追加
         await message.add_reaction(emoji)
         await interaction.response.send_message(f"✅ リアクション {emoji} を追加しました！", ephemeral=True)
@@ -182,7 +168,6 @@ async def emoji_command(interaction: discord.Interaction, emoji_name: str, messa
         await interaction.response.send_message("❌ リアクション追加に失敗しました", ephemeral=True)
     except Exception as e:
         await interaction.response.send_message(f"❌ エラー: {e}", ephemeral=True)
-
     
 @client.event
 async def on_message(message):
