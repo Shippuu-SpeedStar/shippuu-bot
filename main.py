@@ -154,7 +154,7 @@ async def emoji_command(interaction: discord.Interaction, emoji: str, message_li
         guild_id, channel_id, message_id = map(int, parts[-3:])
 
         # 対象のチャンネルとメッセージを取得
-        channel = await bot.fetch_channel(channel_id)
+        channel = await client.fetch_channel(channel_id)
         message = await channel.fetch_message(message_id)
 
         # リアクション追加
