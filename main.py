@@ -13,6 +13,7 @@ from datetime import datetime, timezone, timedelta
 import time
 import requests
 import json
+from urllib.parse import urlparse  # emoji
 
 intents=discord.Intents.all()
 intents.message_content = True
