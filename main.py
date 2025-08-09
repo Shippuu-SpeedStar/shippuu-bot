@@ -171,7 +171,7 @@ async def emoji_command(
             if len(history) < 2:
                 await interaction.response.send_message("❌ 直前のメッセージが見つかりません", ephemeral=True)
                 return
-            message = history[1]
+            message = history[0]
 
         # リアクション追加
         await message.add_reaction(emoji)
