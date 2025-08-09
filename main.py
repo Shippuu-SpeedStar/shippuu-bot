@@ -142,21 +142,36 @@ async def bomb_game(interaction: discord.Interaction, mode: str):
 #emoji 管理者以外は非表示
 @tree.command(name="emoji", description="指定したメッセージに絵文字リアクションをつけます")
 @app_commands.default_permissions(administrator=True)
-@app_commands.describe(emoji="つけたい絵文字", message_link="Discordメッセージのリンク")
-async def emoji_command(interaction: discord.Interaction, emoji: str, message_link: str):
+@app_commands.describe(
+    emoji="つけたい絵文字",
+    message_link="Discordメッセージのリンク（省略すると直前のメッセージ）"
+)
+async def emoji_command(
+    interaction: discord.Interaction,
+    emoji: str,
+    message_link: str = None
+):
     try:
-        # メッセージリンクを分解
-        parsed = urlparse(message_link)
-        parts = parsed.path.strip("/").split("/")
-        if len(parts) < 3:
-            await interaction.response.send_message("❌ メッセージリンクが正しくありません", ephemeral=True)
-            return
+        if message_link:
+            # メッセージリンクを分解
+            parsed = urlparse(message_link)
+            parts = parsed.path.strip("/").split("/")
+            if len(parts) < 3:
+                await interaction.response.send_message("❌ メッセージリンクが正しくありません", ephemeral=True)
+                return
 
-        guild_id, channel_id, message_id = map(int, parts[-3:])
-
-        # 対象のチャンネルとメッセージを取得
-        channel = await client.fetch_channel(channel_id)
-        message = await channel.fetch_message(message_id)
+            _, channel_id, message_id = map(int, parts[-3:])
+            # 対象メッセージ取得
+            channel = await client.fetch_channel(channel_id)
+            message = await channel.fetch_message(message_id)
+        else:
+            # コマンド直前のメッセージ取得
+            channel = interaction.channel
+            history = [m async for m in channel.history(limit=2)]
+            if len(history) < 2:
+                await interaction.response.send_message("❌ 直前のメッセージが見つかりません", ephemeral=True)
+                return
+            message = history[1]
 
         # リアクション追加
         await message.add_reaction(emoji)
