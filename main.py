@@ -140,7 +140,8 @@ async def bomb_game(interaction: discord.Interaction, mode: str):
         # プレイヤーが爆弾をセット
         await interaction.response.send_message("💣 **どこに爆弾を仕掛けますか？**", view=BombGame.BombSetup(interaction.user.id))
 #emoji 管理者以外は非表示
-@tree.command(name="emoji", description="指定したメッセージに絵文字リアクションをつけます",default_member_permissions=discord.Permissions(administrator=True))
+@tree.command(name="emoji", description="指定したメッセージに絵文字リアクションをつけます")
+@app_commands.default_permissions(administrator=True)
 @app_commands.describe(emoji="つけたい絵文字", message_link="Discordメッセージのリンク")
 async def emoji_command(interaction: discord.Interaction, emoji: str, message_link: str):
     try:
