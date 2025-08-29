@@ -185,6 +185,22 @@ async def emoji_command(
         await interaction.response.send_message("❌ リアクション追加に失敗しました", ephemeral=True)
     except Exception as e:
         await interaction.response.send_message(f"❌ エラー: {e}", ephemeral=True)
+#money機能
+@tree.command(name="money", description="ランダムなお金をゲット！")
+async def money_get(interaction: discord.Interaction):
+    user_id = str(interaction.user.id)
+    data = load_money()
+
+    reward = random.randint(50, 100)
+    data[user_id] = data.get(user_id, 0) + reward
+
+    save_money(data)  # Render上に一応保存
+    trigger_github_action(data)  # GitHub Actionsでcommit
+
+    await interaction.response.send_message(
+        f"{interaction.user.mention} さん、{reward}コインを獲得しました！\n"
+        f"現在の所持金: {data[user_id]} コイン"
+    )
     
 @client.event
 async def on_message(message):
@@ -284,22 +300,6 @@ def trigger_github_action(data):
     }
     r = requests.post(url, headers=headers, json=payload)
     print("GitHub Action Trigger:", r.status_code, r.text)
-    
-@tree.command(name="money", description="ランダムなお金をゲット！")
-async def money(interaction: discord.Interaction):
-    user_id = str(interaction.user.id)
-    data = load_money()
-
-    reward = random.randint(50, 100)
-    data[user_id] = data.get(user_id, 0) + reward
-
-    save_money(data)  # Render上に一応保存
-    trigger_github_action(data)  # GitHub Actionsでcommit
-
-    await interaction.response.send_message(
-        f"{interaction.user.mention} さん、{reward}コインを獲得しました！\n"
-        f"現在の所持金: {data[user_id]} コイン"
-    )
                 
 TOKEN = os.getenv("DISCORD_TOKEN")
 # Web サーバの立ち上げ
