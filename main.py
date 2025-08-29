@@ -33,10 +33,10 @@ COOLDOWN_SECONDS = 600  # 10分（600秒）
 ALLOWED_GUILD_IDS = {1235503983179730944,1268381411904323655,1268199427865055345}  # ✅ Botが所属できるサーバーIDをここに記入（複数対応可）
 PROBOT_ID = 282859044593598464  # ProbotのユーザーID
 ROLE_ID = 1301466875762442250  # 付与したいロールのID
-#money
-money_data = {}
-last_work_used = {}
-GITHUB_REPO = "Shippuu-SpeedStar/shippuu-bot"  # GitHubリポジトリのパス
+#money機能
+DATA_FILE = "server_money.json"
+REPO = "Shippuu-SpeedStar/shippuu-bot"  # ex: GameCreatorTAM/discord-bot
+
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # 安全な方法で読み込む（本番環境ではSecrets管理推奨）
 @client.event
 async def on_member_join(member):
@@ -201,6 +201,31 @@ async def money_get(interaction: discord.Interaction):
         f"{interaction.user.mention} さん、{reward}コインを獲得しました！\n"
         f"現在の所持金: {data[user_id]} コイン"
     )
+def load_money():
+    if not os.path.exists(DATA_FILE):
+        return {}
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_money(data):
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def trigger_github_action(data):
+    """GitHub Actionsに更新リクエストを送る"""
+    url = f"https://api.github.com/repos/{REPO}/dispatches"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"token {GITHUB_TOKEN}"
+    }
+    payload = {
+        "event_type": "update-money",
+        "client_payload": {
+            "data": json.dumps(data, ensure_ascii=False)
+        }
+    }
+    r = requests.post(url, headers=headers, json=payload)
+    print("GitHub Action Trigger:", r.status_code, r.text)
     
 @client.event
 async def on_message(message):
@@ -272,34 +297,6 @@ async def on_message(message):
         except Exception as e:
             await message.channel.send(f"⚠️ エラーが発生しました: {e}")
 
-#money機能
-DATA_FILE = "server_money.json"
-REPO = "Shippuu-SpeedStar/shippuu-bot"  # ex: GameCreatorTAM/discord-bot
-def load_money():
-    if not os.path.exists(DATA_FILE):
-        return {}
-    with open(DATA_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-def save_money(data):
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-def trigger_github_action(data):
-    """GitHub Actionsに更新リクエストを送る"""
-    url = f"https://api.github.com/repos/{REPO}/dispatches"
-    headers = {
-        "Accept": "application/vnd.github+json",
-        "Authorization": f"token {GITHUB_TOKEN}"
-    }
-    payload = {
-        "event_type": "update-money",
-        "client_payload": {
-            "data": json.dumps(data, ensure_ascii=False)
-        }
-    }
-    r = requests.post(url, headers=headers, json=payload)
-    print("GitHub Action Trigger:", r.status_code, r.text)
                 
 TOKEN = os.getenv("DISCORD_TOKEN")
 # Web サーバの立ち上げ
