@@ -35,7 +35,31 @@ PROBOT_ID = 282859044593598464  # ProbotのユーザーID
 ROLE_ID = 1301466875762442250  # 付与したいロールのID
 #money機能
 DATA_FILE = "server_money.json"
-REPO = "Shippuu-SpeedStar/shippuu-bot"  # ex: GameCreatorTAM/discord-bot
+GITHUB_USER = "Shippuu-SpeedStar"
+REPO = "shippuu-bot"
+BRANCH = "main"
+FILE_PATH = "server_money.json"
+
+RAW_URL = f"https://raw.githubusercontent.com/{GITHUB_USER}/{REPO}/{BRANCH}/{FILE_PATH}"
+# グローバル変数に格納（ファイルは作らない）
+money_data = {}
+async def load_money_from_github():
+    """GitHub から最新の server_money.json を取得してメモリに格納"""
+    global money_data
+    async with aiohttp.ClientSession() as session:
+        async with session.get(RAW_URL) as resp:
+            if resp.status == 200:
+                text = await resp.text()
+                try:
+                    money_data = json.loads(text)
+                    print("✅ 最新の money_data を取得しました")
+                except json.JSONDecodeError:
+                    money_data = {}
+                    print("⚠️ JSONの読み込みに失敗したため空データを使用します")
+            else:
+                money_data = {}
+                print(f"⚠️ ダウンロード失敗: {resp.status}")
+
 
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # 安全な方法で読み込む（本番環境ではSecrets管理推奨）
 @client.event
@@ -185,14 +209,17 @@ async def emoji_command(
         await interaction.response.send_message("❌ リアクション追加に失敗しました", ephemeral=True)
     except Exception as e:
         await interaction.response.send_message(f"❌ エラー: {e}", ephemeral=True)
-#money機能
-@tree.command(name="money", description="ランダムなお金をゲット！")
+# money機能
+@tree.command(name="money", description="ランダムでお金をもらう")
 async def money_get(interaction: discord.Interaction):
-    user_id = str(interaction.user.id)
-    data = load_money()
+    import random
+    global money_data
 
+    user_id = str(interaction.user.id)
     reward = random.randint(50, 100)
-    data[user_id] = data.get(user_id, 0) + reward
+
+    # 既存データに加算
+    money_data[user_id] = money_data.get(user_id, 0) + reward
 
     save_money(data)  # Render上に一応保存
     trigger_github_action(data)  # GitHub Actionsでcommit
