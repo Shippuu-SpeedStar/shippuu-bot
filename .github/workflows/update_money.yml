@@ -1,8 +1,11 @@
 name: Update server_money.json
 
 on:
-  repository_dispatch:  # Botからのリクエストで起動
+  repository_dispatch:
     types: [update-money]
+
+permissions:
+  contents: write   # ←これ重要
 
 jobs:
   update:
@@ -18,7 +21,7 @@ jobs:
 
       - name: Update server_money.json
         run: |
-          echo '${{ github.event.client_payload.data }}' > server_money.json
+          echo '${{ github.event.client_payload.data }}' | jq '.' > server_money.json
           git add server_money.json
           git commit -m "Update money data"
           git push
