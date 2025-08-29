@@ -256,6 +256,50 @@ async def on_message(message):
         except Exception as e:
             await message.channel.send(f"⚠️ エラーが発生しました: {e}")
 
+#money機能
+DATA_FILE = "server_money.json"
+REPO = "Shippuu-SpeedStar/shippuu-bot"  # ex: GameCreatorTAM/discord-bot
+def load_money():
+    if not os.path.exists(DATA_FILE):
+        return {}
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_money(data):
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def trigger_github_action(data):
+    """GitHub Actionsに更新リクエストを送る"""
+    url = f"https://api.github.com/repos/{REPO}/dispatches"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"token {GITHUB_TOKEN}"
+    }
+    payload = {
+        "event_type": "update-money",
+        "client_payload": {
+            "data": json.dumps(data, ensure_ascii=False)
+        }
+    }
+    r = requests.post(url, headers=headers, json=payload)
+    print("GitHub Action Trigger:", r.status_code, r.text)
+    
+@tree.command(name="money", description="ランダムなお金をゲット！")
+async def money(interaction: discord.Interaction):
+    user_id = str(interaction.user.id)
+    data = load_money()
+
+    reward = random.randint(50, 100)
+    data[user_id] = data.get(user_id, 0) + reward
+
+    save_money(data)  # Render上に一応保存
+    trigger_github_action(data)  # GitHub Actionsでcommit
+
+    await interaction.response.send_message(
+        f"{interaction.user.mention} さん、{reward}コインを獲得しました！\n"
+        f"現在の所持金: {data[user_id]} コイン"
+    )
                 
 TOKEN = os.getenv("DISCORD_TOKEN")
 # Web サーバの立ち上げ
