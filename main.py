@@ -30,7 +30,7 @@ last_omikuji = {}
 ALLOWED_USERS = {1228003399933497366, 1255885908784451739}  # ✅ 使えるユーザーのIDをここに追加
 cooldowns = {}  # user_id: last_used_timestamp
 COOLDOWN_SECONDS = 600  # 10分（600秒）
-ALLOWED_GUILD_IDS = {1235503983179730944,1268381411904323655,1268199427865055345}  # ✅ Botが所属できるサーバーIDをここに記入（複数対応可）
+ALLOWED_GUILD_IDS = {1235503983179730944,1268381411904323655,1268199427865055345,1314588938358226986}  # ✅ Botが所属できるサーバーIDをここに記入（複数対応可）
 PROBOT_ID = 282859044593598464  # ProbotのユーザーID
 ROLE_ID = 1301466875762442250  # 付与したいロールのID
 #money機能
@@ -67,6 +67,9 @@ async def on_guild_join(guild):
         print(f"❌ 許可されていないサーバー ({guild.name}) に参加したため退出します。")
         try:
             await guild.leave()
+            channel_id = '1428880974820937902'
+            channel = client.get_channel(channel_id)
+            await channel.send(f"❌ 許可されていないサーバー ({guild.name}) に参加したため退出します。")
         except Exception as e:
             print(f"⚠️ サーバーから退出できませんでした: {e}")
     else:
