@@ -234,6 +234,8 @@ def trigger_github_action(data):
 # -----------------------------------------
 # /translate [メッセージリンク] [言語] [自分だけ]
 # -----------------------------------------
+# LibreTranslate設定
+lt = LibreTranslateAPI("https://translate.argosopentech.com/")
 @tree.command(name="translate", description="メッセージを翻訳します")
 @app_commands.describe(
     message_link="翻訳したいメッセージのリンク（省略可）",
