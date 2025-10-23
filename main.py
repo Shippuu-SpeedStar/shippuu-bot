@@ -307,7 +307,8 @@ async def translate(
             return
     # 2️⃣ 翻訳処理
     try:
-        translated = await interaction.client.loop.run_in_executor(None, libre_translate, message_content, lang)
+        translated = await interaction.client.loop.run_in_executor(
+    None, lambda: libre_translate(message_content, lang)
     except Exception as e:
         await interaction.followup.send(f"⚠️ 翻訳に失敗しました: {e}", ephemeral=private)
         return
