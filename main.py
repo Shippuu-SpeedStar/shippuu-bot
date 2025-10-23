@@ -258,7 +258,7 @@ async def translate(
             await interaction.followup.send("⚠️ メッセージリンクの形式が正しくありません。", ephemeral=private)
             return
         guild_id, channel_id, message_id = map(int, match.groups())
-        channel = bot.get_channel(channel_id)
+        channel = client.get_channel(channel_id)
         if channel is None:
             await interaction.followup.send("⚠️ チャンネルが見つかりません。", ephemeral=private)
             return
@@ -271,7 +271,7 @@ async def translate(
     else:
         # 直前のメッセージを取得
         async for msg in interaction.channel.history(limit=2):
-            if msg.author != bot.user and msg.id != interaction.id:
+            if msg.author != client.user and msg.id != interaction.id:
                 message_content = msg.content
                 break
         if message_content is None:
