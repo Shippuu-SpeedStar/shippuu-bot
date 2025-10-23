@@ -14,6 +14,7 @@ import time
 import requests
 import json
 from urllib.parse import urlparse  # emoji
+from libretranslatepy import LibreTranslateAPI
 
 intents=discord.Intents.all()
 intents.message_content = True
@@ -230,6 +231,64 @@ def trigger_github_action(data):
     r = requests.post(url, headers=headers, json=payload)
     print("GitHub Action Trigger:", r.status_code, r.text)
     
+# -----------------------------------------
+# /translate [メッセージリンク] [言語] [自分だけ]
+# -----------------------------------------
+@tree.command(name="translate", description="メッセージを翻訳します")
+@app_commands.describe(
+    message_link="翻訳したいメッセージのリンク（省略可）",
+    lang="翻訳先の言語コード（例: en, ja, fr）省略時は日本語",
+    private="自分だけに表示します"
+)
+async def translate(
+    interaction: discord.Interaction,
+    message_link: str = None,
+    lang: str = "ja",
+    private: bool = False
+):
+    await interaction.response.defer(ephemeral=private)
+    # 1️⃣ 翻訳対象メッセージを取得
+    message_content = None
+    if message_link:
+        # メッセージリンクからチャンネルとメッセージIDを取得
+        match = re.match(r"https://discord(?:app)?\.com/channels/(\d+)/(\d+)/(\d+)", message_link)
+        if not match:
+            await interaction.followup.send("⚠️ メッセージリンクの形式が正しくありません。", ephemeral=private)
+            return
+        guild_id, channel_id, message_id = map(int, match.groups())
+        channel = bot.get_channel(channel_id)
+        if channel is None:
+            await interaction.followup.send("⚠️ チャンネルが見つかりません。", ephemeral=private)
+            return
+        try:
+            msg = await channel.fetch_message(message_id)
+            message_content = msg.content
+        except Exception as e:
+            await interaction.followup.send(f"⚠️ メッセージを取得できませんでした: {e}", ephemeral=private)
+            return
+    else:
+        # 直前のメッセージを取得
+        async for msg in interaction.channel.history(limit=2):
+            if msg.author != bot.user and msg.id != interaction.id:
+                message_content = msg.content
+                break
+        if message_content is None:
+            await interaction.followup.send("⚠️ 翻訳するメッセージが見つかりません。", ephemeral=private)
+            return
+    # 2️⃣ 翻訳処理
+    try:
+        translated = lt.translate(message_content, "auto", lang)
+    except Exception as e:
+        await interaction.followup.send(f"⚠️ 翻訳に失敗しました: {e}", ephemeral=private)
+        return
+    # 3️⃣ 結果を送信
+    result_text = (
+        f"🌐 **翻訳結果 ({lang})**\n"
+        f"```{translated}```"
+    )
+    await interaction.followup.send(result_text, ephemeral=private)
+
+
 @client.event
 async def on_message(message):
     reg_res = re.compile(u"疾風、(.+)の天気は？").search(message.content)
