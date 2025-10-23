@@ -234,8 +234,38 @@ def trigger_github_action(data):
 # -----------------------------------------
 # /translate [メッセージリンク] [言語] [自分だけ]
 # -----------------------------------------
-# LibreTranslate設定
-lt = LibreTranslateAPI("https://libretranslate.com/translate")
+# LibreTranslate設定（安定ミラーを使用）
+TRANSLATE_MIRRORS = [
+    "https://translate.astian.org/translate",
+    "https://translate.argosopentech.com/translate",
+    "https://libretranslate.de/translate",
+]
+async def libre_translate(text: str, target_lang: str):
+    """LibreTranslate APIに直接POSTして翻訳"""
+    payload = {
+        "q": text,
+        "source": "auto",
+        "target": target_lang,
+        "format": "text",
+        "alternatives": 3,
+        "api_key": ""
+    }
+    headers = {"Content-Type": "application/json"}
+    # ミラーを順番に試す（1つ落ちてても動く）
+    for url in TRANSLATE_MIRRORS:
+        try:
+            res = requests.post(url, json=payload, headers=headers, timeout=8)
+            res.raise_for_status()
+            data = res.json()
+            if "translatedText" in data:
+                return data["translatedText"]
+        except Exception as e:
+            print(f"⚠️ {url} 失敗: {e}")
+            continue
+    raise Exception("すべての翻訳サーバーが応答しませんでした。")
+# -----------------------------------------
+# Discord コマンド定義
+# -----------------------------------------
 @tree.command(name="translate", description="メッセージを翻訳します")
 @app_commands.describe(
     message_link="翻訳したいメッセージのリンク（省略可）",
@@ -252,13 +282,12 @@ async def translate(
     # 1️⃣ 翻訳対象メッセージを取得
     message_content = None
     if message_link:
-        # メッセージリンクからチャンネルとメッセージIDを取得
         match = re.match(r"https://discord(?:app)?\.com/channels/(\d+)/(\d+)/(\d+)", message_link)
         if not match:
             await interaction.followup.send("⚠️ メッセージリンクの形式が正しくありません。", ephemeral=private)
             return
         guild_id, channel_id, message_id = map(int, match.groups())
-        channel = client.get_channel(channel_id)
+        channel = interaction.client.get_channel(channel_id)
         if channel is None:
             await interaction.followup.send("⚠️ チャンネルが見つかりません。", ephemeral=private)
             return
@@ -269,9 +298,8 @@ async def translate(
             await interaction.followup.send(f"⚠️ メッセージを取得できませんでした: {e}", ephemeral=private)
             return
     else:
-        # 直前のメッセージを取得
         async for msg in interaction.channel.history(limit=2):
-            if msg.author != client.user and msg.id != interaction.id:
+            if msg.author != interaction.client.user and msg.id != interaction.id:
                 message_content = msg.content
                 break
         if message_content is None:
@@ -279,7 +307,7 @@ async def translate(
             return
     # 2️⃣ 翻訳処理
     try:
-        translated = lt.translate(message_content, "auto", lang)
+        translated = await interaction.client.loop.run_in_executor(None, libre_translate, message_content, lang)
     except Exception as e:
         await interaction.followup.send(f"⚠️ 翻訳に失敗しました: {e}", ephemeral=private)
         return
