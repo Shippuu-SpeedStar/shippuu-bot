@@ -274,24 +274,25 @@ async def translate(
         if message_content is None:
             await interaction.followup.send("⚠️ 翻訳するメッセージが見つかりません。", ephemeral=private)
             return
-    # 2️⃣ 翻訳処理
-	try:
-	    url = "https://libretranslate.com/translate"
-	    payload = {
-	        "q": message_content,
-	        "source": "auto",
- 	       "target": lang,
- 	       "format": "text",
-  	      "alternatives": 3,
- 	       "api_key": ""
-	    }
-    	headers = {"Content-Type": "application/json"}
-    	response = requests.post(url, headers=headers, json=payload)
-    	result = response.json()
-    	translated = result.get("translatedText", "⚠️ 翻訳結果を取得できませんでした。")
-	except Exception as e:
-    	await interaction.followup.send(f"⚠️ 翻訳に失敗しました: {e}", ephemeral=private)
-    	return
+        # 2️⃣ 翻訳処理
+    try:
+        url = "https://libretranslate.com/translate"
+        payload = {
+            "q": message_content,
+            "source": "auto",
+            "target": lang,
+            "format": "text",
+            "alternatives": 3,
+            "api_key": ""
+        }
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(url, headers=headers, json=payload)
+        result = response.json()
+        translated = result.get("translatedText", "⚠️ 翻訳結果を取得できませんでした。")
+
+    except Exception as e:
+        await interaction.followup.send(f"⚠️ 翻訳に失敗しました: {e}", ephemeral=private)
+        return
     # 3️⃣ 結果を送信
     result_text = (
         f"🌐 **翻訳結果 ({lang})**\n"
