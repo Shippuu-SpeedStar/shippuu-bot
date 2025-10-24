@@ -288,7 +288,7 @@ async def translate(
         headers = {"Content-Type": "application/json"}
         response = requests.post(url, headers=headers, json=payload)
         result = response.json()
-        translated = result.get("translatedText", "⚠️ 翻訳結果を取得できませんでした。")
+        translated = result#result.get("translatedText", "⚠️ 翻訳結果を取得できませんでした。")
 
     except Exception as e:
         await interaction.followup.send(f"⚠️ 翻訳に失敗しました: {e}", ephemeral=private)
