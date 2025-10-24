@@ -231,38 +231,7 @@ def trigger_github_action(data):
     r = requests.post(url, headers=headers, json=payload)
     print("GitHub Action Trigger:", r.status_code, r.text)
     
-# -----------------------------------------
-# /translate [メッセージリンク] [言語] [自分だけ]
-# -----------------------------------------
-# LibreTranslate設定（安定ミラーを使用）
-TRANSLATE_MIRRORS = [
-    "https://translate.astian.org/translate",
-    "https://translate.argosopentech.com/translate",
-    "https://libretranslate.de/translate",
-]
-async def libre_translate(text: str, target_lang: str):
-    """LibreTranslate APIに直接POSTして翻訳"""
-    payload = {
-        "q": text,
-        "source": "auto",
-        "target": target_lang,
-        "format": "text",
-        "alternatives": 3,
-        "api_key": ""
-    }
-    headers = {"Content-Type": "application/json"}
-    # ミラーを順番に試す（1つ落ちてても動く）
-    for url in TRANSLATE_MIRRORS:
-        try:
-            res = requests.post(url, json=payload, headers=headers, timeout=8)
-            res.raise_for_status()
-            data = res.json()
-            if "translatedText" in data:
-                return data["translatedText"]
-        except Exception as e:
-            print(f"⚠️ {url} 失敗: {e}")
-            continue
-    raise Exception("すべての翻訳サーバーが応答しませんでした。")
+   
 # -----------------------------------------
 # Discord コマンド定義
 # -----------------------------------------
@@ -307,9 +276,19 @@ async def translate(
             return
     # 2️⃣ 翻訳処理
     try:
-        translated = await interaction.client.loop.run_in_executor(
-            None, lambda: libre_translate(message_content, lang)
-        )
+        const res = await fetch("https://libretranslate.com/translate", {
+	        method: "POST",
+	        body: JSON.stringify({
+	        	q: "",
+	        	source: "auto",
+		        target: "ja",
+		        format: "text",
+		        alternatives: 3,
+		        api_key: ""
+	        }),
+	        headers: { "Content-Type": "application/json" }
+        });
+        translated = await res.json()
     except Exception as e:
         await interaction.followup.send(f"⚠️ 翻訳に失敗しました: {e}", ephemeral=private)
         return
