@@ -231,74 +231,23 @@ def trigger_github_action(data):
     r = requests.post(url, headers=headers, json=payload)
     print("GitHub Action Trigger:", r.status_code, r.text)
     
-   
-# -----------------------------------------
-# Discord コマンド定義
-# -----------------------------------------
-@tree.command(name="translate", description="メッセージを翻訳します")
+@tree.command(name="timeout", description="指定したユーザーをタイムアウトします。")
 @app_commands.describe(
-    message_link="翻訳したいメッセージのリンク（省略可）",
-    lang="翻訳先の言語コード（例: en, ja, fr）省略時は日本語",
-    private="自分だけに表示します"
+    user="タイムアウトするユーザー",
+    minutes="タイムアウトの時間（分単位）"
 )
-async def translate(
-    interaction: discord.Interaction,
-    message_link: str = None,
-    lang: str = "ja",
-    private: bool = False
-):
-    await interaction.response.defer(ephemeral=private)
-    # 1️⃣ 翻訳対象メッセージを取得
-    message_content = None
-    if message_link:
-        match = re.match(r"https://discord(?:app)?\.com/channels/(\d+)/(\d+)/(\d+)", message_link)
-        if not match:
-            await interaction.followup.send("⚠️ メッセージリンクの形式が正しくありません。", ephemeral=private)
-            return
-        guild_id, channel_id, message_id = map(int, match.groups())
-        channel = interaction.client.get_channel(channel_id)
-        if channel is None:
-            await interaction.followup.send("⚠️ チャンネルが見つかりません。", ephemeral=private)
-            return
-        try:
-            msg = await channel.fetch_message(message_id)
-            message_content = msg.content
-        except Exception as e:
-            await interaction.followup.send(f"⚠️ メッセージを取得できませんでした: {e}", ephemeral=private)
-            return
-    else:
-        async for msg in interaction.channel.history(limit=2):
-            if msg.author != interaction.client.user and msg.id != interaction.id:
-                message_content = msg.content
-                break
-        if message_content is None:
-            await interaction.followup.send("⚠️ 翻訳するメッセージが見つかりません。", ephemeral=private)
-            return
-        # 2️⃣ 翻訳処理
+@commands.has_permissions(moderate_members=True)
+async def timeout(interaction: discord.Interaction, user: discord.Member, minutes: int):
     try:
-        url = "https://libretranslate.com/translate"
-        payload = {
-            "q": message_content,
-            "source": "auto",
-            "target": lang,
-            "format": "text",
-            "alternatives": 3,
-            "api_key": ""
-        }
-        headers = {"Content-Type": "application/json"}
-        response = requests.post(url, headers=headers, json=payload)
-        result = response.json()
-        translated = result#result.get("translatedText", "⚠️ 翻訳結果を取得できませんでした。")
-
+        duration = timedelta(minutes=minutes)
+        await user.timeout(duration)
+        await interaction.response.send_message(
+            f"✅ {user.mention} を {minutes} 分間タイムアウトしました。", ephemeral=True
+        )
+    except discord.Forbidden:
+        await interaction.response.send_message("❌ 権限が不足しています。", ephemeral=True)
     except Exception as e:
-        await interaction.followup.send(f"⚠️ 翻訳に失敗しました: {e}", ephemeral=private)
-        return
-    # 3️⃣ 結果を送信
-    result_text = (
-        f"🌐 **翻訳結果 ({lang})**\n"
-        f"```{translated}```"
-    )
-    await interaction.followup.send(result_text, ephemeral=private)
+        await interaction.response.send_message(f"⚠️ エラーが発生しました: {e}", ephemeral=True)
 
 @client.event
 async def on_message(message):
