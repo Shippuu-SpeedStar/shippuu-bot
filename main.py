@@ -258,17 +258,8 @@ async def translate(interaction: discord.Interaction, message_id: str = None, ep
     # 翻訳処理
     text = message.content
     try:
-        lang = translator.detect(text).lang
-        if lang == "ja":
-            trans_text = translator.translate(text, src=lang, dest="en").text
-            result = f"🇯🇵 → 🇺🇸\n> {text}\n\n**{trans_text}**"
-        elif lang == "en":
-            trans_text = translator.translate(text, src=lang, dest="ja").text
-            result = f"🇺🇸 → 🇯🇵\n> {text}\n\n**{trans_text}**"
-        else:
-            trans_text = translator.translate(text, src=lang, dest="ja").text
-            result = f"🌐 ({lang}) → 🇯🇵\n> {text}\n\n**{trans_text}**"
-
+        trans_text = translator.translate(text, src="en", dest="ja")
+        result = f"🇯🇵 → 🇺🇸\n> {text}\n\n**{trans_text}**"
     except Exception as e:
         await interaction.followup.send(f"⚠️ 翻訳中にエラーが発生しました: {e}", ephemeral=True)
         return
