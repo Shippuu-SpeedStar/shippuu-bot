@@ -1,11 +1,9 @@
 discord.py==2.1.1
 Flask==2.3.3
 discord.py[voice]
-PyNacl
+PyNaCl
 openmeteo-requests
 requests-cache
 pandas
 retry-requests
-googletrans==4.0.0-rc1
-httpx==0.13.3
-httpcore==0.9.1
+deep-translator
