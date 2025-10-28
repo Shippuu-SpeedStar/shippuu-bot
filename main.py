@@ -14,7 +14,7 @@ import time
 import requests
 import json
 from urllib.parse import urlparse  # emoji
-from libretranslatepy import LibreTranslateAPI
+from googletrans import Translator
 
 intents=discord.Intents.all()
 intents.message_content = True
@@ -230,6 +230,50 @@ def trigger_github_action(data):
     }
     r = requests.post(url, headers=headers, json=payload)
     print("GitHub Action Trigger:", r.status_code, r.text)
+
+translator = Translator()
+@tree.command(name="translate", description="メッセージを翻訳します")
+@app_commands.describe(
+    message_id="翻訳したいメッセージのID（省略可）",
+    ephemeral="実行者だけに表示するかどうか（true/false、省略可）"
+)
+async def translate(interaction: discord.Interaction, message_id: str = None, ephemeral: bool = False):
+    await interaction.response.defer(thinking=True, ephemeral=True)
+    # 翻訳対象のメッセージを取得
+    if message_id:
+        try:
+            message = await interaction.channel.fetch_message(int(message_id))
+        except:
+            await interaction.followup.send("❌ メッセージが見つかりませんでした。", ephemeral=True)
+            return
+    else:
+        # 直前の他人のメッセージを取得
+        async for msg in interaction.channel.history(limit=5):
+            if msg.author != interaction.user and not msg.author.bot:
+                message = msg
+                break
+        else:
+            await interaction.followup.send("❌ 翻訳対象のメッセージが見つかりません。", ephemeral=True)
+            return
+    # 翻訳処理
+    text = message.content
+    try:
+        lang = translator.detect(text).lang
+        if lang == "ja":
+            trans_text = translator.translate(text, src=lang, dest="en").text
+            result = f"🇯🇵 → 🇺🇸\n> {text}\n\n**{trans_text}**"
+        elif lang == "en":
+            trans_text = translator.translate(text, src=lang, dest="ja").text
+            result = f"🇺🇸 → 🇯🇵\n> {text}\n\n**{trans_text}**"
+        else:
+            trans_text = translator.translate(text, src=lang, dest="ja").text
+            result = f"🌐 ({lang}) → 🇯🇵\n> {text}\n\n**{trans_text}**"
+
+    except Exception as e:
+        await interaction.followup.send(f"⚠️ 翻訳中にエラーが発生しました: {e}", ephemeral=True)
+        return
+    # 結果を送信（ephemeral指定に応じて公開・非公開）
+    await interaction.followup.send(result, ephemeral=ephemeral)
     
 @tree.command(name="timeout", description="指定したユーザーをタイムアウトします。")
 @app_commands.describe(
