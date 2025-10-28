@@ -14,7 +14,7 @@ import time
 import requests
 import json
 from urllib.parse import urlparse  # emoji
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 
 intents=discord.Intents.all()
 intents.message_content = True
@@ -231,7 +231,7 @@ def trigger_github_action(data):
     r = requests.post(url, headers=headers, json=payload)
     print("GitHub Action Trigger:", r.status_code, r.text)
 
-translator = Translator()
+translator = GoogleTranslator(source='auto', target='en')
 @tree.command(name="translate", description="メッセージを翻訳します")
 @app_commands.describe(
     message_id="翻訳したいメッセージのID（省略可）",
