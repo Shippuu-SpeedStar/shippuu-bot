@@ -6,4 +6,4 @@ openmeteo-requests
 requests-cache
 pandas
 retry-requests
-libretranslatepy
+googletrans==4.0.0-rc1
