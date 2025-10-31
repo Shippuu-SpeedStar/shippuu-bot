@@ -231,15 +231,24 @@ def trigger_github_action(data):
     r = requests.post(url, headers=headers, json=payload)
     print("GitHub Action Trigger:", r.status_code, r.text)
 
-translator = GoogleTranslator(source='auto', target='en')
 @tree.command(name="translate", description="メッセージを翻訳します")
 @app_commands.describe(
     message_id="翻訳したいメッセージのID（省略可）",
+    direction="翻訳方向を選択（to_en: 日本語→英語, to_ja: 英語→日本語）",
     ephemeral="実行者だけに表示するかどうか（true/false、省略可）"
 )
-async def translate(interaction: discord.Interaction, message_id: str = None, ephemeral: bool = False):
+@app_commands.choices(direction=[
+    app_commands.Choice(name="日本語 → 英語", value="to_en"),
+    app_commands.Choice(name="英語 → 日本語", value="to_ja")
+])
+async def translate(
+    interaction: discord.Interaction,
+    message_id: str = None,
+    direction: str = "to_en",
+    ephemeral: bool = False
+):
     await interaction.response.defer(thinking=True, ephemeral=True)
-    # 翻訳対象のメッセージを取得
+    # 翻訳対象メッセージの取得
     if message_id:
         try:
             message = await interaction.channel.fetch_message(int(message_id))
@@ -247,7 +256,6 @@ async def translate(interaction: discord.Interaction, message_id: str = None, ep
             await interaction.followup.send("❌ メッセージが見つかりませんでした。", ephemeral=True)
             return
     else:
-        # 直前の他人のメッセージを取得
         async for msg in interaction.channel.history(limit=5):
             if msg.author != interaction.user and not msg.author.bot:
                 message = msg
@@ -256,14 +264,20 @@ async def translate(interaction: discord.Interaction, message_id: str = None, ep
             await interaction.followup.send("❌ 翻訳対象のメッセージが見つかりません。", ephemeral=True)
             return
     # 翻訳処理
-    text = message.content
+    text = message.content.strip()
+    if not text:
+        await interaction.followup.send("❌ 翻訳するテキストが空です。", ephemeral=True)
+        return
     try:
-        trans_text = translator.translate(text, src="en", dest="ja")
-        result = f"🇯🇵 → 🇺🇸\n> {text}\n\n**{trans_text}**"
+        if direction == "to_en":
+            src, dest, flag = "ja", "en", "🇯🇵 → 🇺🇸"
+        else:
+            src, dest, flag = "en", "ja", "🇺🇸 → 🇯🇵"
+        translated_text = GoogleTranslator(source=src, target=dest).translate(text)
+        result = f"{flag}\n> {text}\n\n**{translated_text}**"
     except Exception as e:
         await interaction.followup.send(f"⚠️ 翻訳中にエラーが発生しました: {e}", ephemeral=True)
         return
-    # 結果を送信（ephemeral指定に応じて公開・非公開）
     await interaction.followup.send(result, ephemeral=ephemeral)
     
 @tree.command(name="timeout", description="指定したユーザーをタイムアウトします。")
