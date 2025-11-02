@@ -274,7 +274,7 @@ async def translate(
         else:
             src, dest, flag = "en", "ja", "🇺🇸 → 🇯🇵"
         translated_text = GoogleTranslator(source=src, target=dest).translate(text)
-        result = f"{flag}\n> {text}\n\n**{translated_text}**"
+        result = f"{flag}\n> **{translated_text}**"
     except Exception as e:
         await interaction.followup.send(f"⚠️ 翻訳中にエラーが発生しました: {e}", ephemeral=True)
         return
