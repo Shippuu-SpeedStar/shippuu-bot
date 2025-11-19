@@ -247,13 +247,13 @@ async def translate(
     direction: str = "to_en",
     ephemeral: bool = False
 ):
-    await interaction.response.defer(thinking=True, ephemeral=True)
+    await interaction.response.defer(thinking=True, ephemeral=ephemeral)
     # 翻訳対象メッセージの取得
     if message_id:
         try:
             message = await interaction.channel.fetch_message(int(message_id))
         except:
-            await interaction.followup.send("❌ メッセージが見つかりませんでした。", ephemeral=True)
+            await interaction.followup.send("❌ メッセージが見つかりませんでした。", ephemeral=ephemeral)
             return
     else:
         async for msg in interaction.channel.history(limit=5):
@@ -261,12 +261,12 @@ async def translate(
                 message = msg
                 break
         else:
-            await interaction.followup.send("❌ 翻訳対象のメッセージが見つかりません。", ephemeral=True)
+            await interaction.followup.send("❌ 翻訳対象のメッセージが見つかりません。", ephemeral=ephemeral)
             return
     # 翻訳処理
     text = message.content.strip()
     if not text:
-        await interaction.followup.send("❌ 翻訳するテキストが空です。", ephemeral=True)
+        await interaction.followup.send("❌ 翻訳するテキストが空です。", ephemeral=ephemeral)
         return
     try:
         if direction == "to_en":
@@ -276,7 +276,7 @@ async def translate(
         translated_text = GoogleTranslator(source=src, target=dest).translate(text)
         result = f"{flag}\n> **{translated_text}**"
     except Exception as e:
-        await interaction.followup.send(f"⚠️ 翻訳中にエラーが発生しました: {e}", ephemeral=True)
+        await interaction.followup.send(f"⚠️ 翻訳中にエラーが発生しました: {e}", ephemeral=ephemeral)
         return
     await interaction.followup.send(result, ephemeral=ephemeral)
     
