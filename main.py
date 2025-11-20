@@ -244,17 +244,19 @@ def trigger_github_action(data):
 async def translate(
     interaction: discord.Interaction,
     message_id: str = None,
-    direction: str = "to_en",
+    direction: str = "to_ja",
     ephemeral: bool = False
 ):
     await interaction.response.defer(thinking=True, ephemeral=ephemeral)
     # 翻訳対象メッセージの取得
     if message_id:
-        try:
-            message = await interaction.channel.fetch_message(int(message_id))
-        except:
-            await interaction.followup.send("❌ メッセージが見つかりませんでした。", ephemeral=ephemeral)
-            return
+        # コマンド直前のメッセージ取得
+            channel = interaction.channel
+            history = [m async for m in channel.history(limit=2)]
+            if len(history) < 2:
+                await interaction.followup.send("❌ メッセージが見つかりませんでした。", ephemeral=ephemeral)
+                return
+            message = history[0]
     else:
         async for msg in interaction.channel.history(limit=5):
             if msg.author != interaction.user and not msg.author.bot:
