@@ -192,7 +192,11 @@ async def emoji_command(
 #テキスト送信
 @tree.command(name="send",description="指定チャンネルにメッセージを送信します（管理者専用）")
 @app_commands.describe(channel_id="送信先のチャンネルID",content="送信するメッセージ内容")
-async def send_message(interaction: discord.Interaction, channel_id: str, content: str):
+async def send_message(
+    interaction: discord.Interaction,
+    channel_id: str,
+    content: app_commands.Range[str, 1, 2000]  # ← 長文対応
+):
     user_id = interaction.user.id
     # 権限チェック
     if user_id not in ALLOWED_USERS:
