@@ -15,6 +15,7 @@ import requests
 import json
 from urllib.parse import urlparse  # emoji
 from deep_translator import GoogleTranslator
+from discord.ui import Modal, InputText
 
 intents=discord.Intents.all()
 intents.message_content = True
@@ -190,47 +191,34 @@ async def emoji_command(
     except Exception as e:
         await interaction.response.send_message(f"❌ エラー: {e}", ephemeral=True)
 #テキスト送信
-@tree.command(name="send",description="指定チャンネルにメッセージを送信します（管理者専用）")
-@app_commands.describe(channel_id="送信先のチャンネルID",content="送信するメッセージ内容")
-async def send_message(
-    interaction: discord.Interaction,
-    channel_id: str,
-    content: app_commands.Range[str, 1, 2000]  # ← 長文対応
-):
-    user_id = interaction.user.id
-    # 権限チェック
-    if user_id not in ALLOWED_USERS:
-        await interaction.response.send_message("❌ このコマンドを使う権限がありません。", ephemeral=True)
-        return
-    # クールダウンチェック
-    now = time.time()
-    last_used = cooldowns.get(user_id, 0)
-    if now - last_used < COOLDOWN_SECONDS:
-        remaining = int(COOLDOWN_SECONDS - (now - last_used))
-        await interaction.response.send_message(
-            f"⏳ あと {remaining // 60}分{remaining % 60}秒 待ってください。",
-            ephemeral=True
-        )
-        return
-    cooldowns[user_id] = now  # クールダウン更新
-    # チャンネル取得
+class SendModal(Modal, title="メッセージ送信"):
+    def __init__(self, channel_id: int):
+        super().__init__()
+        self.channel_id = channel_id
+
+        self.add_item(InputText(
+            label="メッセージ内容（改行可）",
+            style=discord.InputTextStyle.long  # ← 長文 + 改行対応
+        ))
+
+    async def callback(self, interaction: discord.Interaction):
+        content = self.children[0].value
+        channel = interaction.client.get_channel(self.channel_id)
+        await channel.send(content)
+        await interaction.response.send_message(f"送信しました: <#{self.channel_id}>")
+
+@tree.command(name="send", description="改行可能なメッセージを送信します")
+@app_commands.describe(channel_id="チャンネルID")
+async def send(interaction: discord.Interaction, channel_id: str):
     try:
         channel_id_int = int(channel_id)
-        channel = client.get_channel(channel_id_int)
-        if channel is None:
-            await interaction.response.send_message(
-                "❌ チャンネルが見つかりません。Botがアクセスできるか確認してください。",
-                ephemeral=True
-            )
-            return
-        # 送信
-        await channel.send(content)
-        await interaction.response.send_message(
-            f"✅ チャンネル <#{channel_id}> に送信しました。"
-        )
+    except:
+        await interaction.response.send_message("チャンネルIDが不正です。", ephemeral=True)
+        return
 
-    except Exception as e:
-        await interaction.response.send_message(f"⚠️ エラーが発生しました: {e}", ephemeral=True)
+    modal = SendModal(channel_id_int)
+    await interaction.response.send_modal(modal)
+    
 #money機能
 @tree.command(name="money", description="ランダムなお金をゲット！")
 async def money_get(interaction: discord.Interaction):
