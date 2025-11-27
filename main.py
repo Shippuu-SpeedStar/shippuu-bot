@@ -197,7 +197,7 @@ async def emoji_command(
 )
 @app_commands.describe(
     channel_id="送信先のチャンネルID",
-    content="送信するメッセージ内容"
+    content="送信するメッセージ内容（改行したい場合は |n| を使ってください）"
 )
 async def send_message(interaction: discord.Interaction, channel_id: str, content: str):
 
@@ -219,7 +219,10 @@ async def send_message(interaction: discord.Interaction, channel_id: str, conten
         )
         return
 
-    cooldowns[user_id] = now  # クールダウン更新
+    cooldowns[user_id] = now
+
+    # 改行トークンを実際の改行に変換
+    content = content.replace("|n|", "\n")
 
     # チャンネル取得
     try:
