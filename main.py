@@ -15,7 +15,6 @@ import requests
 import json
 from urllib.parse import urlparse  # emoji
 from deep_translator import GoogleTranslator
-from discord.ui import Modal, InputText
 
 intents=discord.Intents.all()
 intents.message_content = True
@@ -197,25 +196,25 @@ class SendModal(discord.ui.Modal, title="メッセージ送信"):
         super().__init__()
         self.interaction = interaction
         self.channel_id = channel_id
-        # 長文 + 改行対応入力欄
-        self.message_box = discord.ui.InputText(
+        # TextInput を使用
+        self.message_box = discord.ui.TextInput(
             label="送信するメッセージ（改行可能）",
-            style=discord.InputTextStyle.long,
+            style=discord.TextStyle.long,  # ← 長文 + 改行対応
             placeholder="ここにメッセージを書いてください。\nEnter で改行できます。",
             required=True
         )
         self.add_item(self.message_box)
-    async def callback(self, modal_interaction: discord.Interaction):
+    async def on_submit(self, interaction: discord.Interaction):
         content = self.message_box.value
-        channel = client.get_channel(self.channel_id)
+        channel = bot.get_channel(self.channel_id)
         if channel is None:
-            await modal_interaction.response.send_message(
+            await interaction.response.send_message(
                 "❌ チャンネルが見つかりません。Botがアクセスできるか確認してください。",
                 ephemeral=True
             )
             return
         await channel.send(content)
-        await modal_interaction.response.send_message(
+        await interaction.response.send_message(
             f"✅ チャンネル <#{self.channel_id}> に送信しました。",
             ephemeral=False
         )
