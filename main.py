@@ -30,7 +30,7 @@ last_omikuji = {}
 # 遠隔当行の履歴を保存する辞書
 ALLOWED_USERS = {1228003399933497366, 1255885908784451739}  # ✅ 使えるユーザーのIDをここに追加
 cooldowns = {}  # user_id: last_used_timestamp
-COOLDOWN_SECONDS = 600  # 10分（600秒）
+COOLDOWN_SECONDS = 60  # 1分（60秒）
 ALLOWED_GUILD_IDS = {1235503983179730944,1268381411904323655,1268199427865055345,1314588938358226986}  # ✅ Botが所属できるサーバーIDをここに記入（複数対応可）
 PROBOT_ID = 282859044593598464  # ProbotのユーザーID
 ROLE_ID = 1301466875762442250  # 付与したいロールのID
@@ -212,7 +212,7 @@ async def send_message(interaction: discord.Interaction, channel_id: str, conten
     # チャンネル取得
     try:
         channel_id_int = int(channel_id)
-        channel = bot.get_channel(channel_id_int)
+        channel = client.get_channel(channel_id_int)
         if channel is None:
             await interaction.response.send_message(
                 "❌ チャンネルが見つかりません。Botがアクセスできるか確認してください。",
