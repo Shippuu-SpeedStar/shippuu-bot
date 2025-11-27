@@ -207,7 +207,7 @@ class SendModal(discord.ui.Modal, title="メッセージ送信"):
         self.add_item(self.message_box)
     async def callback(self, modal_interaction: discord.Interaction):
         content = self.message_box.value
-        channel = bot.get_channel(self.channel_id)
+        channel = client.get_channel(self.channel_id)
         if channel is None:
             await modal_interaction.response.send_message(
                 "❌ チャンネルが見つかりません。Botがアクセスできるか確認してください。",
