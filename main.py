@@ -15,6 +15,7 @@ import requests
 import json
 from urllib.parse import urlparse  # emoji
 from deep_translator import GoogleTranslator
+from langdetect import detect  # 言語判定ライブラリ
 
 intents=discord.Intents.all()
 intents.message_content = True
@@ -290,17 +291,18 @@ def trigger_github_action(data):
 @tree.command(name="translate", description="メッセージを翻訳します")
 @app_commands.describe(
     message_id="翻訳したいメッセージのID（省略可）",
-    direction="翻訳方向を選択（to_en: 日本語→英語, to_ja: 英語→日本語）",
+    direction="翻訳方向を選択（to_en: 日本語→English, to_ja: English→日本語）",
     ephemeral="実行者だけに表示するかどうか（true/false、省略可）"
 )
 @app_commands.choices(direction=[
-    app_commands.Choice(name="日本語 → 英語", value="to_en"),
-    app_commands.Choice(name="英語 → 日本語", value="to_ja")
+    app_commands.Choice(name="自動/Auto",value="auto"),
+    app_commands.Choice(name="日本語 → English", value="to_en"),
+    app_commands.Choice(name="English → 日本語", value="to_ja")
 ])
 async def translate(
     interaction: discord.Interaction,
     message_id: str = None,
-    direction: str = "to_ja",
+    direction: str = "auto",
     ephemeral: bool = False
 ):
     await interaction.response.defer(thinking=True, ephemeral=ephemeral)
@@ -315,7 +317,7 @@ async def translate(
     else:
         # 直近の「ユーザーが送った」メッセージを取得
         async for msg in interaction.channel.history(limit=10):
-            if msg.author != interaction.user and not msg.author.bot:
+            if msg.content and not msg.author.bot:
                 message = msg
                 break
         if message is None:
@@ -323,19 +325,77 @@ async def translate(
             return
     text = message.content.strip()
     if not text:
-        await interaction.followup.send("❌ 翻訳するテキストが空です。", ephemeral=ephemeral)
+        await interaction.followup.send("❌ メッセージが空です。", ephemeral=ephemeral)
         return
+        
+    if direction == "auto":
+        try:
+            detected = detect(text)  # ja / en / etc...
+        except:
+            await interaction.followup.send("⚠️ 判別中にエラーが発生しました。", ephemeral=ephemeral)
+            return
+        if detected.startswith("ja"):
+            direction = "to_en"
+        else:
+            direction = "to_ja"
     try:
         if direction == "to_en":
             src, dest, flag = "ja", "en", "🇯🇵 → 🇺🇸"
         else:
             src, dest, flag = "en", "ja", "🇺🇸 → 🇯🇵"
         translated = GoogleTranslator(source=src, target=dest).translate(text)
-        result = f"{flag}\n> **{translated}**"
+        result = f"{translated}"
     except Exception as e:
-        await interaction.followup.send(f"⚠️ 翻訳中にエラーが発生しました: {e}", ephemeral=ephemeral)
+        await interaction.followup.send("⚠️ 翻訳中にエラーが発生しました:{e}", ephemeral=ephemeral)
         return
     await interaction.followup.send(result, ephemeral=ephemeral)
+
+@tree.command(name="auto_translate_mode", description="自動翻訳モードをチャンネルごとにON/OFFします。")
+@app_commands.describe(
+    direction="ON / OFF を選択"
+)
+@app_commands.choices(direction=[
+    app_commands.Choice(name="ON", value="on"),
+    app_commands.Choice(name="OFF", value="off"),
+])
+async def AutoTranslateModeChange(interaction: discord.Interaction, direction: str):
+    channel_id = str(interaction.channel.id)
+    # 現在の設定をロード
+    data = load_auto_translate_settings()
+    # 設定を保存
+    data[channel_id] = direction
+    save_auto_translate_settings(data)
+    trigger_github_action(data)
+    mode_text = "ON" if direction == "on" else "OFF"
+    await interaction.response.send_message(
+        f"🌐 このチャンネルの自動翻訳モードを **{mode_text}** に切り替えました！"
+    )
+# ▼ JSON 読み書き関数 ▼
+def load_auto_translate_settings():
+    if not os.path.exists(AUTO_TRANSLATE_FILE):
+        return {}
+    with open(AUTO_TRANSLATE_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def save_auto_translate_settings(data):
+    with open(AUTO_TRANSLATE_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+def trigger_github_action(data):
+    """GitHub Actionsに更新リクエストを送る"""
+    url = f"https://api.github.com/repos/{REPO}/dispatches"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"token {GITHUB_TOKEN}"
+    }
+    payload = {
+        "event_type": "TranslateModeChange",
+        "client_payload": {
+            "data": json.dumps(data, ensure_ascii=False)
+        }
+    }
+    r = requests.post(url, headers=headers, json=payload)
+    print("GitHub Action Trigger:", r.status_code, r.text)
+
     
 @tree.command(name="timeout", description="指定したユーザーをタイムアウトします。")
 @app_commands.describe(
@@ -424,6 +484,31 @@ async def on_message(message):
             await message.channel.send(f"✅ 指定したチャンネル <#{channel_id}> に送信しました。")
         except Exception as e:
             await message.channel.send(f"⚠️ エラーが発生しました: {e}")
+    # ▼ 自動翻訳 ON/OFF の読み取り
+    channel_id = str(message.channel.id)
+    settings = load_auto_translate_settings()
+    is_auto = settings.get(channel_id) == "on"
+    if is_auto:
+        text = message.content.strip()
+        if not text:
+            return
+        # 言語判定
+        try:
+            detected = detect(text)
+        except:
+            return
+        # 翻訳方向を決定
+        if detected.startswith("ja"):
+            src, dest, flag = "ja", "en", "🇯🇵 → 🇺🇸"
+        else:
+            src, dest, flag = "en", "ja", "🇺🇸 → 🇯🇵"
+        # 翻訳
+        try:
+            translated = GoogleTranslator(source=src, target=dest).translate(text)
+        except:
+            return
+        # 返信形式で送信
+        await message.reply(f"{translated}", mention_author=False)
 
                 
 TOKEN = os.getenv("DISCORD_TOKEN")
