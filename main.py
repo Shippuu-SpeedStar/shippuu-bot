@@ -36,6 +36,7 @@ ALLOWED_GUILD_IDS = {1235503983179730944,1268381411904323655,1268199427865055345
 PROBOT_ID = 282859044593598464  # ProbotのユーザーID
 ROLE_ID = 1301466875762442250  # 付与したいロールのID
 #money機能
+AUTO_TRANSLATE_FILE = "AutoTranslateChannel.json"
 DATA_FILE = "server_money.json"
 REPO = "Shippuu-SpeedStar/shippuu-bot"  # ex: GameCreatorTAM/discord-bot
 
