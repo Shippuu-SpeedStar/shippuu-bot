@@ -200,7 +200,7 @@ async def emoji_command(
     channel_id="送信先のチャンネルID",
     content="送信するメッセージ内容（改行したい場合は |n| を使ってください）"
 )
-async def send_message(interaction: discord.Interaction, channel_id: str = None, content: str):
+async def send_message(interaction: discord.Interaction, content: str, channel_id: str = None):
 
     user_id = interaction.user.id
 
