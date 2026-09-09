@@ -151,7 +151,7 @@ async def bomb_game(interaction: discord.Interaction, mode: str):
     description="ターン制の弾幕回避ゲームを開始します"
 )
 async def danmaku(interaction: discord.Interaction):
-    view = DanmakuGameView(interaction.user.id)
+    view = Danmaku(interaction.user.id)
 
     await interaction.response.send_message(
         content=view.render(),
