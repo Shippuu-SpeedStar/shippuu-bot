@@ -6,6 +6,7 @@ from discord.ext import commands, tasks
 import weather
 import BombGame
 import DanmakuGame
+import VoiceController
 import topic
 import re
 import asyncio
@@ -465,6 +466,22 @@ async def timeout(interaction: discord.Interaction, user: discord.Member, minute
         await interaction.response.send_message("❌ 権限が不足しています。", ephemeral=True)
     except Exception as e:
         await interaction.response.send_message(f"⚠️ エラーが発生しました: {e}", ephemeral=True)
+
+#VC
+@tree.command(
+    name="vc",
+    description="ボイスチャンネルに参加します"
+)
+async def vc(interaction: discord.Interaction):
+    await VoiceController.join_vc(interaction)
+
+@tree.command(
+    name="leave",
+    description="ボイスチャンネルから退出します"
+)
+async def leave(interaction: discord.Interaction):
+    await VoiceController.leave_vc(interaction)
+#VC^^^^^^^^^^
 
 @client.event
 async def on_message(message):
