@@ -200,7 +200,7 @@ async def emoji_command(
     channel_id="送信先のチャンネルID",
     content="送信するメッセージ内容（改行したい場合は |n| を使ってください）"
 )
-async def send_message(interaction: discord.Interaction, channel_id: str, content: str):
+async def send_message(interaction: discord.Interaction, channel_id: str = None, content: str):
 
     user_id = interaction.user.id
 
@@ -225,24 +225,61 @@ async def send_message(interaction: discord.Interaction, channel_id: str, conten
     # 改行トークンを実際の改行に変換
     content = content.replace("|n|", "\n")
 
-    # チャンネル取得
+    # channel_idが指定されたかどうか
+    channel_was_specified = channel_id is not None
+
     try:
-        channel_id_int = int(channel_id)
-        channel = client.get_channel(channel_id_int)
+        if channel_was_specified:
+            # 指定されたチャンネルを取得
+            channel_id_int = int(channel_id)
+            channel = client.get_channel(channel_id_int)
 
-        if channel is None:
-            await interaction.response.send_message(
-                "❌ チャンネルが見つかりません。Botがアクセスできるか確認してください。",
-                ephemeral=True
-            )
-            return
+            if channel is None:
+                await interaction.response.send_message(
+                    "❌ チャンネルが見つかりません。"
+                    "Botがアクセスできるか確認してください。",
+                    ephemeral=True
+                )
+                return
+        else:
+            # コマンドが実行されたチャンネルを使用
+            channel = interaction.channel
 
-        # 送信
+            if channel is None:
+                await interaction.response.send_message(
+                    "❌ コマンドが実行されたチャンネルを取得できませんでした。",
+                    ephemeral=True
+                )
+                return
+
+        # メッセージ送信
         await channel.send(content)
+
+        # 送信成功時にクールダウンを開始
+        cooldowns[user_id] = now
+
         await interaction.response.send_message(
-            f"✅ チャンネル <#{channel_id}> に送信しました。"
+            f"✅ チャンネル {channel.mention} に送信しました。",
+            ephemeral=not channel_was_specified
         )
 
+    except ValueError:
+        await interaction.response.send_message(
+            "❌ チャンネルIDは数字で入力してください。",
+            ephemeral=True
+        )
+
+    except discord.Forbidden:
+        await interaction.response.send_message(
+            "❌ このチャンネルにメッセージを送信する権限がありません。",
+            ephemeral=True
+        )
+
+    except discord.HTTPException as e:
+        await interaction.response.send_message(
+            f"⚠️ Discordへの送信中にエラーが発生しました: {e}",
+            ephemeral=True
+        )
     except Exception as e:
         await interaction.response.send_message(f"⚠️ エラーが発生しました: {e}", ephemeral=True)
     
