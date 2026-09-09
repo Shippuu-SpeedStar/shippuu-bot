@@ -5,7 +5,7 @@ from discord import app_commands
 from discord.ext import commands, tasks
 import weather
 import BombGame
-import Danmaku
+import DanmakuGame
 import topic
 import re
 import asyncio
@@ -148,18 +148,15 @@ async def bomb_game(interaction: discord.Interaction, mode: str):
         
 @tree.command(
     name="danmaku",
-    description="ターン制の弾幕回避ゲームを開始します"
+    description="弾幕回避ゲームを開始する！"
 )
-async def danmaku(interaction: discord.Interaction):
-    view = Danmaku(interaction.user.id)
+async def danmaku_game(interaction: discord.Interaction):
+    game = DanmakuGame.DanmakuGame(interaction.user.id)
 
     await interaction.response.send_message(
-        content=view.render(),
-        view=view
+        game.create_display(),
+        view=game
     )
-
-    # タイムアウト時にメッセージを編集するため保存
-    view.message = await interaction.original_response()
 
 #emoji 管理者以外は非表示
 @tree.command(name="emoji", description="指定したメッセージに絵文字リアクションをつけます")
