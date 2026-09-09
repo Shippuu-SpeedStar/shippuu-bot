@@ -1,7 +1,7 @@
 import random
 import discord
 from discord import app_commands
-class DanmakuGameView(discord.ui.View):
+class Danmaku(discord.ui.View):
     WIDTH = 5
     HEIGHT = 5
     MAX_TURNS = 30
