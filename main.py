@@ -5,7 +5,7 @@ from discord import app_commands
 from discord.ext import commands, tasks
 import weather
 import BombGame
-import DanmakuGameView
+import Danmaku
 import topic
 import re
 import asyncio
