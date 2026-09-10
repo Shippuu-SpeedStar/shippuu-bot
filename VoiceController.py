@@ -69,7 +69,7 @@ async def join_vc(interaction: discord.Interaction):
         voice_client = await asyncio.wait_for(
             voice_channel.connect(
                 timeout=20.0,
-                reconnect=True
+                reconnect=False
             ),
             timeout=25.0
         )
