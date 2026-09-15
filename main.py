@@ -518,8 +518,32 @@ async def on_message(message):
         today_topic = topic.on_message()
         await message.channel.send(today_topic)
     elif reg_res:
-        weather_message = weather.on_message(reg_res)
-        await message.channel.send(weather_message)
+        # 他のBotの投稿を天気問い合わせとして処理しない
+        if message.author.bot:
+            return
+
+        user_id = message.author.id
+        now = time.monotonic()
+        last_used = weather_cooldowns.get(user_id, 0.0)
+
+        if now - last_used < WEATHER_COOLDOWN_SECONDS:
+            remaining = max(
+                1,
+                int(WEATHER_COOLDOWN_SECONDS - (now - last_used))
+            )
+            await message.channel.send(
+                f"⏳ 天気情報はあと{remaining}秒後に利用できます。"
+            )
+        else:
+            weather_cooldowns[user_id] = now
+
+            # Open-Meteoの同期通信を別スレッドで実行し、
+            # 通信中にDiscord Bot全体が停止するのを防ぐ
+            weather_message = await asyncio.to_thread(
+                weather.on_message,
+                reg_res
+            )
+            await message.channel.send(weather_message)
     # コマンド形式：疾風、チャンネル送信[チャンネルID],[メッセージ内容]
     if message.content.startswith("疾風、チャンネル送信[") and "]," in message.content:
         user_id = message.author.id
