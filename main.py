@@ -34,6 +34,9 @@ last_omikuji = {}
 ALLOWED_USERS = {1228003399933497366, 1255885908784451739}  # ✅ 使えるユーザーのIDをここに追加
 cooldowns = {}  # user_id: last_used_timestamp
 COOLDOWN_SECONDS = 60  # 1分（60秒）
+# 天気機能の連続実行を抑え、外部APIへの不要なアクセスを防ぐ
+weather_cooldowns = {}  # user_id: last_used_monotonic_time
+WEATHER_COOLDOWN_SECONDS = 15
 ALLOWED_GUILD_IDS = {1235503983179730944,1268381411904323655,1268199427865055345,1314588938358226986}  # ✅ Botが所属できるサーバーIDをここに記入（複数対応可）
 PROBOT_ID = 282859044593598464  # ProbotのユーザーID
 ROLE_ID = 1301466875762442250  # 付与したいロールのID
